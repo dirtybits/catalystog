@@ -1,7 +1,9 @@
 Make sure you have current versions gcc, cmake, make, and boost.
 
 $ git clone https://github/dirtybits/catalyst.git
+
 $ cd catalyst/
+
 $ make
 
 
