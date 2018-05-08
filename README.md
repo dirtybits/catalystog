@@ -1,3 +1,10 @@
+Make sure you have current versions gcc, cmake, make, and boost.
+
+git clone https://github/dirtybits/catalyst.git
+cd catalyst/
+make
+
+
 This is the reference code for the [CryptoNote](https://cryptonote.org) cryptocurrency protocol, being used to implement Catalyst.
 
 * Launch your own CryptoNote currency: [CryptoNote Starter](https://cryptonotestarter.org/)
