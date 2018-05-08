@@ -1,4 +1,4 @@
-## Catalyst Build
+## Catalyst Build on *nix
 
 Make sure you have current versions of gcc, cmake, make, and boost.
 ```
