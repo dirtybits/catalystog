@@ -73,7 +73,7 @@ const char     CRYPTONOTE_BLOCKCHAIN_INDICES_FILENAME[]      = "blockchainindice
 const char     MINER_CONFIG_FILE_NAME[]                      = "miner_conf.json";
 } // parameters
 
-//TODO Put here the name of your currency
+// currency name and genesis block
 const char     CRYPTONOTE_NAME[]                             = "catalyst";
 const char     GENESIS_COINBASE_TX_HEX[]                     = "";
 
