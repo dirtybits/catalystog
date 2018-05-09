@@ -1,6 +1,6 @@
 ## Catalyst Build on *nix
 
-Make sure you have current versions of gcc, cmake, make, and boost.
+Make sure you have current versions of gcc, cmake, make, and boost. (Insofar as an Arch Linux install goes)
 ```
 $ git clone https://github/dirtybits/catalyst.git
 $ cd catalyst/
