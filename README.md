@@ -1,3 +1,5 @@
+(THIS IS A WORK IN PROGRESS)
+
 ## Building Catalyst on *nix
 
 Make sure you have current versions of gcc, cmake, make, and boost. (Insofar as an Arch Linux install goes)
