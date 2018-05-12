@@ -1,4 +1,4 @@
-## (THIS IS A WORK IN PROGRESS, expect the build to reach ~%30 before the errors start popping up)
+## THIS IS A WORK IN PROGRESS, expect the build to reach ~%30 before the errors start popping up
 
 ## Building Catalyst on *nix
 
