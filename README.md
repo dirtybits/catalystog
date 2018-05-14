@@ -1,4 +1,4 @@
-# catalyst
+# Catalyst
 Catalyst (CST) is a new cryptocurrency based on CryptoNote/Bytecoin protocols. A coin for The People.
 
 ## THIS IS A WORK IN PROGRESS, expect the build to reach ~%30 before the errors start popping up. Thank you for your patience.
