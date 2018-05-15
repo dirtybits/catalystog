@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "BlockChainState.hpp"
@@ -26,7 +27,7 @@ static const std::string UNLOCK_TIME_PREFIX  = "U";
 
 const size_t MAX_POOL_COMPLEXITY = 100000;  // ~1000 "normal" transactions
 
-using namespace bytecoin;
+using namespace catalyst;
 using namespace platform;
 
 static size_t get_complexity(const Transaction &tx) {  // For pool
