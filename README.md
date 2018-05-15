@@ -17,18 +17,21 @@ All commands below are adapted for Ubuntu, other distributions may need another 
 
 Building with standard options
 Create directory bcndev somewhere and go there:
-
+`
 $> mkdir dirtybits
 $> cd dirtybits
+`
 To go futher you have to have a number of packages and utilities.
 
 build-essential package:
-
+`
 $> sudo apt-get install build-essential
+`
 CMake (3.5 or newer):
-
+`
 $> sudo apt-get install cmake 
 $> cmake --version
+`
 If version is too old, follow instructions on the official site.
 
 Boost (1.62 or newer):
