@@ -28,8 +28,7 @@
  * ---------------------------------------------------------------------------
  */
 
-#ifndef _OAES_CONFIG_H
-#define _OAES_CONFIG_H
+#pragma once
 
 #ifdef __cplusplus 
 extern "C" {
@@ -47,4 +46,3 @@ extern "C" {
 }
 #endif
 
-#endif // _OAES_CONFIG_H

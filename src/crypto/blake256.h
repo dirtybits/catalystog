@@ -1,7 +1,10 @@
-#ifndef _BLAKE256_H_
-#define _BLAKE256_H_
+#pragma once
 
 #include <stdint.h>
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 typedef struct {
   uint32_t h[8], s[4], t[2];
@@ -40,4 +43,7 @@ void hmac_blake224_final(hmac_state *, uint8_t *);
 void hmac_blake256_hash(uint8_t *, const uint8_t *, uint64_t, const uint8_t *, uint64_t);
 void hmac_blake224_hash(uint8_t *, const uint8_t *, uint64_t, const uint8_t *, uint64_t);
 
-#endif /* _BLAKE256_H_ */
+#if defined(__cplusplus)
+}
+#endif
+

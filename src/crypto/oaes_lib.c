@@ -27,13 +27,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ---------------------------------------------------------------------------
  */
-static const char _NR[] = {
-	0x4e,0x61,0x62,0x69,0x6c,0x20,0x53,0x2e,0x20,
-	0x41,0x6c,0x20,0x52,0x61,0x6d,0x6c,0x69,0x00 };
+//static const char _NR[] = {
+//	0x4e,0x61,0x62,0x69,0x6c,0x20,0x53,0x2e,0x20,
+//	0x41,0x6c,0x20,0x52,0x61,0x6d,0x6c,0x69,0x00 };
+// Hello to "Nabil S. Al Ramli", nice trick!
 
 #include <stddef.h>
 #include <time.h> 
-#include <sys/timeb.h>
+//#include <sys/timeb.h>
 #ifdef __APPLE__
 #include <malloc/malloc.h>
 #else 
@@ -43,7 +44,7 @@ static const char _NR[] = {
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <process.h>
 #else
 #include <sys/types.h>
@@ -482,20 +483,20 @@ static void oaes_get_seed( char buf[RANDSIZ + 1] )
 #else
 static uint32_t oaes_get_seed(void)
 {
-	struct timeb timer;
-	struct tm *gmTimer;
-	char * _test = NULL;
+//	struct timeb timer;
+//	struct tm *gmTimer;
+//	char * _test = NULL;
 	uint32_t _ret = 0;
 	
-	ftime (&timer);
-	gmTimer = gmtime( &timer.time );
-	_test = (char *) calloc( sizeof( char ), timer.millitm );
-	_ret = (uint32_t)(gmTimer->tm_year + 1900 + gmTimer->tm_mon + 1 + gmTimer->tm_mday +
-			gmTimer->tm_hour + gmTimer->tm_min + gmTimer->tm_sec + timer.millitm +
-			(uintptr_t) ( _test + timer.millitm ) + getpid());
+//	ftime (&timer);
+//	gmTimer = gmtime( &timer.time );
+//	_test = (char *) calloc( sizeof( char ), timer.millitm );
+//	_ret = (uint32_t)(gmTimer->tm_year + 1900 + gmTimer->tm_mon + 1 + gmTimer->tm_mday +
+//			gmTimer->tm_hour + gmTimer->tm_min + gmTimer->tm_sec + timer.millitm +
+//			(uintptr_t) ( _test + timer.millitm ));
 
-	if( _test )
-		free( _test );
+//	if( _test )
+//		free( _test );
 	
 	return _ret;
 }
@@ -587,7 +588,7 @@ static OAES_RET oaes_key_expand( OAES_CTX * ctx )
 	return OAES_RET_SUCCESS;
 }
 
-static OAES_RET oaes_key_gen( OAES_CTX * ctx, size_t key_size )
+/*static OAES_RET oaes_key_gen( OAES_CTX * ctx, size_t key_size )
 {
 	size_t _i;
 	oaes_key * _key = NULL;
@@ -796,7 +797,7 @@ OAES_RET oaes_key_import( OAES_CTX * ctx,
 	}
 	
 	return OAES_RET_SUCCESS;
-}
+}*/
 
 OAES_RET oaes_key_import_data( OAES_CTX * ctx,
 		const uint8_t * data, size_t data_len )
@@ -910,7 +911,7 @@ OAES_RET oaes_free( OAES_CTX ** ctx )
 		(*_ctx)->rctx = NULL;
 	}
 #endif // OAES_HAVE_ISAAC
-	
+
 	free( *_ctx );
 	*_ctx = NULL;
 
@@ -1016,7 +1017,7 @@ static OAES_RET oaes_encrypt_block(
 	}
 #endif // OAES_DEBUG
 
-	// for round = 1 step 1 to Nr–1
+	// for round = 1 step 1 to Nr-1
 	for( _i = 1; _i < _ctx->key->num_keys - 1; _i++ )
 	{
 		// SubBytes(state)

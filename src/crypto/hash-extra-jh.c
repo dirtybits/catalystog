@@ -1,6 +1,5 @@
-// Copyright (c) 2011-2016 The Cryptonote developers
-// Distributed under the MIT/X11 software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <assert.h>
 #include <stddef.h>
@@ -8,9 +7,9 @@
 #include <string.h>
 
 #include "jh.h"
-#include "hash-ops.h"
+#include "hash-impl.h"
 
-void hash_extra_jh(const void *data, size_t length, char *hash) {
-  int r = jh_hash(HASH_SIZE * 8, data, 8 * length, (uint8_t*)hash);
+void hash_extra_jh(const void *data, size_t length, unsigned char *hash) {
+  int r = jh_hash(HASH_SIZE * 8, data, 8 * length, hash);
   assert(SUCCESS == r);
 }

@@ -1,5 +1,4 @@
-#ifndef _SKEIN_PORT_H_
-#define _SKEIN_PORT_H_
+#pragma once
 
 #include <limits.h>
 #include <stdint.h>
@@ -86,7 +85,7 @@ typedef uint64_t        u64b_t;             /* 64-bit unsigned integer */
 #ifndef SKEIN_NEED_SWAP /* compile-time "override" for endianness? */
 
 
-#include "Common/int-util.h"
+#include "int-util.h"
 
 #define IS_BIG_ENDIAN      4321 /* byte 0 is most significant (mc68k) */
 #define IS_LITTLE_ENDIAN   1234 /* byte 0 is least significant (i386) */
@@ -187,4 +186,4 @@ void    Skein_Get64_LSB_First(u64b_t *dst,const u08b_t *src,size_t wCnt)
 #endif
 #endif   /* ifndef Skein_Get64_LSB_First */
 
-#endif   /* ifndef _SKEIN_PORT_H_ */
+

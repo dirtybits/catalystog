@@ -1,11 +1,13 @@
 // keccak.h
 // 19-Nov-11  Markku-Juhani O. Saarinen <mjos@iki.fi>
-
-#ifndef KECCAK_H
-#define KECCAK_H
+#pragma once
 
 #include <stdint.h>
 #include <string.h>
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 #ifndef KECCAK_ROUNDS
 #define KECCAK_ROUNDS 24
@@ -23,4 +25,7 @@ void keccakf(uint64_t st[25], int norounds);
 
 void keccak1600(const uint8_t *in, int inlen, uint8_t *md);
 
+#if defined(__cplusplus)
+}
 #endif
+

@@ -316,3 +316,4 @@ static inline elem F(key_schedule_round2)(elem k) {
 
 #include "slow-hash.inl"
 #undef F
+

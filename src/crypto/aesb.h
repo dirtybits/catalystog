@@ -17,12 +17,11 @@ and fitness for purpose.
 ---------------------------------------------------------------------------
 Issue Date: 20/12/2007
 */
-
+#pragma once
 #include <stdint.h>
 
 #if defined(__cplusplus)
-extern "C"
-{
+extern "C" {
 #endif
 
 #define TABLE_ALIGN     32

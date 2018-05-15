@@ -28,8 +28,7 @@
  * ---------------------------------------------------------------------------
  */
 
-#ifndef _OAES_LIB_H
-#define _OAES_LIB_H
+#pragma once
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -50,7 +49,7 @@ extern "C" {
 #	endif
 #else
 #	define OAES_API
-#endif // WIN32
+#endif // _WIN32
 
 #define OAES_VERSION "0.8.1"
 #define OAES_BLOCK_SIZE 16
@@ -212,4 +211,3 @@ OAES_API OAES_RET oaes_pseudo_encrypt_ecb( OAES_CTX * ctx, uint8_t * c );
 }
 #endif
 
-#endif // _OAES_LIB_H

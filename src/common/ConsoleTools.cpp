@@ -1,91 +1,93 @@
-// Copyright (c) 2011-2016 The Cryptonote developers
-// Distributed under the MIT/X11 software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
-#include "ConsoleTools.h"
+#include "ConsoleTools.hpp"
 
 #include <stdio.h>
-
-#ifdef _WIN32
-#include <Windows.h>
-#include <io.h>
-#else
 #include <iostream>
-#include <unistd.h>
-#endif
+#include <sstream>
 
-namespace Common { namespace Console { 
-
-bool isConsoleTty() {
-#if defined(WIN32)
-  static bool istty = 0 != _isatty(_fileno(stdout));
+#ifdef _WIN32
+#include <io.h>
+#include "platform/Windows.hpp"
 #else
-  static bool istty = 0 != isatty(fileno(stdout));
+#include <unistd.h>
+#include <boost/concept_check.hpp>
+#include <cstring>
+#include <iostream>
 #endif
-  return istty;
+
+namespace common {
+namespace console {
+
+bool is_console_tty() {
+#if defined(_WIN32)
+	static bool istty = 0 != _isatty(_fileno(stdout));
+#else
+	static bool istty = 0 != isatty(fileno(stdout));
+#endif
+	return istty;
 }
 
-void setTextColor(Color color) {
-  if (!isConsoleTty()) {
-    return;
-  }
+void set_text_color(Color color) {
+	if (!is_console_tty()) {
+		return;
+	}
 
-  if (color > Color::BrightMagenta) {
-    color = Color::Default;
-  }
+	if (color < Color::Default || color > Color::BrightMagenta) {
+		color = Color::Default;
+	}
 
 #ifdef _WIN32
 
-  static WORD winColors[] = {
-    // default
-    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
-    // main
-    FOREGROUND_BLUE,
-    FOREGROUND_GREEN,
-    FOREGROUND_RED,
-    FOREGROUND_RED | FOREGROUND_GREEN,
-    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
-    FOREGROUND_GREEN | FOREGROUND_BLUE,
-    FOREGROUND_RED | FOREGROUND_BLUE,
-    // bright
-    FOREGROUND_BLUE | FOREGROUND_INTENSITY,
-    FOREGROUND_GREEN | FOREGROUND_INTENSITY,
-    FOREGROUND_RED | FOREGROUND_INTENSITY,
-    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY,
-    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
-    FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
-    FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY
-  };
+	static WORD win_colors[] = {// default
+	    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE,
+	    // main
+	    FOREGROUND_BLUE, FOREGROUND_GREEN, FOREGROUND_RED, FOREGROUND_RED | FOREGROUND_GREEN,
+	    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE, FOREGROUND_GREEN | FOREGROUND_BLUE,
+	    FOREGROUND_RED | FOREGROUND_BLUE,
+	    // bright
+	    FOREGROUND_BLUE | FOREGROUND_INTENSITY, FOREGROUND_GREEN | FOREGROUND_INTENSITY,
+	    FOREGROUND_RED | FOREGROUND_INTENSITY, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY,
+	    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+	    FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY,
+	    FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY};
 
-  SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), winColors[static_cast<size_t>(color)]);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), win_colors[static_cast<size_t>(color)]);
 
 #else
 
-  static const char* ansiColors[] = {
-    // default
-    "\033[0m",
-    // main
-    "\033[0;34m",
-    "\033[0;32m",
-    "\033[0;31m",
-    "\033[0;33m",
-    "\033[0;37m",
-    "\033[0;36m",
-    "\033[0;35m",
-    // bright
-    "\033[1;34m",
-    "\033[1;32m",
-    "\033[1;31m",
-    "\033[1;33m",
-    "\033[1;37m",
-    "\033[1;36m",
-    "\033[1;35m"
-  };
+	static const char *ansi_colors[] = {// default
+	    "\033[0m",
+	    // main
+	    "\033[0;34m", "\033[0;32m", "\033[0;31m", "\033[0;33m", "\033[0;37m", "\033[0;36m", "\033[0;35m",
+	    // bright
+	    "\033[1;34m", "\033[1;32m", "\033[1;31m", "\033[1;33m", "\033[1;37m", "\033[1;36m", "\033[1;35m"};
 
-  std::cout << ansiColors[static_cast<size_t>(color)];
+	std::cout << ansi_colors[static_cast<size_t>(color)];
 
 #endif
-
 }
 
-}}
+UnicodeConsoleSetup::UnicodeConsoleSetup() {
+#ifdef _WIN32
+	SetConsoleOutputCP(CP_UTF8);
+	old_buf = std::cout.rdbuf(this);
+#else
+	boost::ignore_unused_variable_warning(old_buf);
+#endif
+}
+UnicodeConsoleSetup::~UnicodeConsoleSetup() {
+#ifdef _WIN32
+	std::cout.rdbuf(old_buf);
+	old_buf = nullptr;
+#endif
+}
+int UnicodeConsoleSetup::sync() {
+	printf("%s", str().c_str());
+	fflush(stdout);
+	str(std::string());
+	return 0;
+}
+}
+}

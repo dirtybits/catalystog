@@ -82,9 +82,11 @@ static void fe_1(fe h) {
 /*
 h = f + g
 Can overlap h with f or g.
+
 Preconditions:
    |f| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
    |g| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
+
 Postconditions:
    |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
 */
@@ -137,6 +139,7 @@ static void fe_add(fe h, const fe f, const fe g) {
 /*
 Replace (f,g) with (g,g) if b == 1;
 replace (f,g) with (f,g) if b == 0.
+
 Preconditions: b in {0,1}.
 */
 
@@ -289,6 +292,7 @@ static void fe_invert(fe out, const fe z) {
 /*
 return 1 if f is in {1,3,5,...,q-2}
 return 0 if f is in {0,2,4,...,q-1}
+
 Preconditions:
    |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
 */
@@ -315,25 +319,32 @@ static int fe_isnonzero(const fe f) {
 /*
 h = f * g
 Can overlap h with f or g.
+
 Preconditions:
    |f| bounded by 1.65*2^26,1.65*2^25,1.65*2^26,1.65*2^25,etc.
    |g| bounded by 1.65*2^26,1.65*2^25,1.65*2^26,1.65*2^25,etc.
+
 Postconditions:
    |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
 */
 
 /*
 Notes on implementation strategy:
+
 Using schoolbook multiplication.
 Karatsuba would save a little in some cost models.
+
 Most multiplications by 2 and 19 are 32-bit precomputations;
 cheaper than 64-bit postcomputations.
+
 There is one remaining multiplication by 19 in the carry chain;
 one *19 precomputation can be merged into this,
 but the resulting data flow is considerably less clean.
+
 There are 12 carries below.
 10 of them are 2-way parallelizable and vectorizable.
 Can get away with 11 carries, but then data flow is much deeper.
+
 With tighter constraints on inputs can squeeze carries into int32.
 */
 
@@ -559,8 +570,10 @@ static void fe_mul(fe h, const fe f, const fe g) {
 
 /*
 h = -f
+
 Preconditions:
    |f| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
+
 Postconditions:
    |h| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
 */
@@ -603,8 +616,10 @@ static void fe_neg(fe h, const fe f) {
 /*
 h = f * f
 Can overlap h with f.
+
 Preconditions:
    |f| bounded by 1.65*2^26,1.65*2^25,1.65*2^26,1.65*2^25,etc.
+
 Postconditions:
    |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
 */
@@ -749,8 +764,10 @@ static void fe_sq(fe h, const fe f) {
 /*
 h = 2 * f * f
 Can overlap h with f.
+
 Preconditions:
    |f| bounded by 1.65*2^26,1.65*2^25,1.65*2^26,1.65*2^25,etc.
+
 Postconditions:
    |h| bounded by 1.01*2^25,1.01*2^24,1.01*2^25,1.01*2^24,etc.
 */
@@ -906,9 +923,11 @@ static void fe_sq2(fe h, const fe f) {
 /*
 h = f - g
 Can overlap h with f or g.
+
 Preconditions:
    |f| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
    |g| bounded by 1.1*2^25,1.1*2^24,1.1*2^25,1.1*2^24,etc.
+
 Postconditions:
    |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
 */
@@ -961,18 +980,24 @@ static void fe_sub(fe h, const fe f, const fe g) {
 /*
 Preconditions:
   |h| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
+
 Write p=2^255-19; q=floor(h/p).
 Basic claim: q = floor(2^(-255)(h + 19 2^(-25)h9 + 2^(-1))).
+
 Proof:
   Have |h|<=p so |q|<=1 so |19^2 2^(-255) q|<1/4.
   Also have |h-2^230 h9|<2^231 so |19 2^(-255)(h-2^230 h9)|<1/4.
+
   Write y=2^(-1)-19^2 2^(-255)q-19 2^(-255)(h-2^230 h9).
   Then 0<y<1.
+
   Write r=h-pq.
   Have 0<=r<=p-1=2^255-20.
   Thus 0<=r+19(2^-255)r<r+19(2^-255)2^255<=2^255-1.
+
   Write x=r+19(2^-255)r+y.
   Then 0<x<2^255 so floor(2^(-255)x) = 0 so floor(q+2^(-255)x) = q.
+
   Have q+2^(-255)x = 2^(-255)(h + 19 2^(-25) h9 + 2^(-1))
   so floor(2^(-255)(h + 19 2^(-25) h9 + 2^(-1))) = q.
 */
@@ -1488,6 +1513,7 @@ static void select(ge_precomp *t, int pos, signed char b) {
 h = a * B
 where a = a[0]+256*a[1]+...+256^31 a[31]
 B is the Ed25519 base point (x,4/5) with x positive.
+
 Preconditions:
   a[31] <= 127
 */
@@ -1576,6 +1602,7 @@ void ge_tobytes(struct EllipticCurvePoint *ss, const ge_p2 *h) {
 /*
 Input:
   s[0]+256*s[1]+...+256^63*s[63] = s
+
 Output:
   s[0]+256*s[1]+...+256^31*s[31] = s mod l
   where l = 2^252 + 27742317777372353535851937790883648493.
@@ -3077,6 +3104,7 @@ Input:
   a[0]+256*a[1]+...+256^31*a[31] = a
   b[0]+256*b[1]+...+256^31*b[31] = b
   c[0]+256*c[1]+...+256^31*c[31] = c
+
 Output:
   s[0]+256*s[1]+...+256^31*s[31] = (c-ab) mod l
   where l = 2^252 + 27742317777372353535851937790883648493.

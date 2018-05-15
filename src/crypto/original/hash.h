@@ -50,3 +50,4 @@ void cn_slow_hash_original(const void *data, size_t length, char *hash);
 }
 
 //CRYPTO_MAKE_HASHABLE(hash)
+
