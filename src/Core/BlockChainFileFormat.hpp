@@ -12,7 +12,7 @@
 #include "CryptoNote.hpp"
 #include "platform/Files.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 class BlockChainState;
 // TODO - convert all read/writes to little endian
@@ -59,4 +59,4 @@ public:
 	static bool export_blockchain2(const std::string &export_folder, BlockChainState &block_chain);
 };
 
-}  // namespace bytecoin
+}  // namespace catalyst

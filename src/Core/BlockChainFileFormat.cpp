@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018 The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "BlockChainFileFormat.hpp"
@@ -8,7 +9,7 @@
 #include "seria/BinaryOutputStream.hpp"
 
 using namespace common;
-using namespace bytecoin;
+using namespace catalyst;
 
 // Example
 //	LegacyBlockChainReader reader(import_path + "/blockindexes.bin", import_path + "/blocks.bin");
