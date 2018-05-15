@@ -1,11 +1,12 @@
 # Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+# Copyright (c) 2018, The Catalyst project
 # Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 cmake_minimum_required(VERSION 3.5)
-project(bytecoin)
+project(catalyst)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_C_STANDARD 11)
-# message(STATUS "Bytecoind profile: According to cmake, sizeof(void *) == " ${CMAKE_SIZEOF_VOID_P})
+# message(STATUS "catalystd profile: According to cmake, sizeof(void *) == " ${CMAKE_SIZEOF_VOID_P})
 option(USE_INSTRUMENTATION "For testing - builds with address sanitizer instrument" OFF)
 option(WITH_THREAD_SANITIZER "For testing - builds with thread sanitizer instrument, USE_INSTRUMENTATION must be also set" OFF)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -129,22 +130,22 @@ if(WIN32)
         link_directories(SYSTEM ../boost/stage32/lib) # must be before add_executable, add_library
     endif()
 endif()
-add_library(bytecoin-crypto ${SRC_CRYPTO})
-add_library(bytecoin-core ${SOURCE_FILES})
-target_link_libraries(bytecoin-core bytecoin-crypto)
+add_library(catalyst-crypto ${SRC_CRYPTO})
+add_library(catalyst-core ${SOURCE_FILES})
+target_link_libraries(catalyst-core catalyst-crypto)
 if(WIN32)
-    add_executable(walletd src/main_walletd.cpp src/bytecoin.rc) # .rc works only if referenced directly in add_executable
-    add_executable(bytecoind src/main_bytecoind.cpp src/bytecoin.rc) # .rc works only if referenced directly in add_executable
+    add_executable(walletd src/main_walletd.cpp src/catalyst.rc) # .rc works only if referenced directly in add_executable
+    add_executable(bytecoind src/main_catalystd.cpp src/bytecoin.rc) # .rc works only if referenced directly in add_executable
 else()
     add_executable(walletd src/main_walletd.cpp)
-    add_executable(bytecoind src/main_bytecoind.cpp)
+    add_executable(catalystd src/main_catalystd.cpp)
 endif()
 add_executable(tests src/main_tests.cpp tests/io.hpp tests/crypto/test_crypto.cpp tests/hash/test_hash.cpp tests/json/test_json.cpp)
 set(Boost_USE_STATIC_LIBS ON)
 add_definitions(-DBOOST_BIND_NO_PLACEHOLDERS=1 -DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE=1) # boost::_1 conflicts with std::_1
-target_link_libraries(walletd bytecoin-crypto bytecoin-core)
-target_link_libraries(bytecoind bytecoin-crypto bytecoin-core)
-target_link_libraries(tests bytecoin-crypto bytecoin-core)
+target_link_libraries(walletd catalyst-crypto catalyst-core)
+target_link_libraries(bytecoind catalyst-crypto catalyst-core)
+target_link_libraries(tests catalyst-crypto catalyst-core)
 if(WIN32)
 else()
     set(BOOST_ROOT ../boost)
@@ -155,9 +156,9 @@ else()
     if(APPLE)
         set(CMAKE_OSX_DEPLOYMENT_TARGET "10.11")
         target_link_libraries(walletd "-framework Foundation" "-framework IOKit")
-        target_link_libraries(bytecoind "-framework Foundation" "-framework IOKit")
+        target_link_libraries(catalystd "-framework Foundation" "-framework IOKit")
     endif()
     target_link_libraries(walletd ${Boost_LIBRARIES} ${LINK_OPENSSL} dl pthread)
-    target_link_libraries(bytecoind ${Boost_LIBRARIES} ${LINK_OPENSSL} dl pthread)
+    target_link_libraries(catalystd ${Boost_LIBRARIES} ${LINK_OPENSSL} dl pthread)
     target_link_libraries(tests ${Boost_LIBRARIES} ${LINK_OPENSSL} dl pthread)
 endif()
