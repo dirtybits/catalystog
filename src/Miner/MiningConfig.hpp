@@ -8,14 +8,14 @@
 #include <string>
 #include "common/CommandLine.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 struct MiningConfig {
 	explicit MiningConfig(common::CommandLine &cmd);
 
 	std::string mining_address;
-	std::string bytecoind_ip;
-	uint16_t bytecoind_port = 0;
+	std::string catalystd_ip;
+	uint16_t catalystd_port = 0;
 	size_t thread_count     = 0;
 	//	size_t scan_period; // We are using longpoll now
 	//	uint8_t log_level;
@@ -25,4 +25,4 @@ struct MiningConfig {
 	                          //	bool help;
 };
 
-}  // namespace bytecoin
+}  // namespace catalyst
