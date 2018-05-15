@@ -5,13 +5,6 @@ Catalyst (CST) is a new cryptocurrency based on CryptoNote/Bytecoin protocols. A
 
 ## Building Catalyst on *nix
 
-Make sure you have current versions of gcc, cmake, make, and boost. 
-```
-$ git clone https://github/dirtybits/catalyst.git
-$ cd catalyst/
-$ make
-```
-
 Building on Linux 64-bit
 All commands below are adapted for Ubuntu, other distributions may need another command set.
 
@@ -50,7 +43,7 @@ Git-clone (or git-pull) Catalyst source code in that folder:
 ```
 $dirtybits> git clone https://github.com/dirtybits/catalyst.git
 ```
-Put LMDB source code in bcndev folder (source files are referenced via relative paths, so you do not need to separately build it):
+Put LMDB source code in dirtybits folder (source files are referenced via relative paths, so you do not need to separately build it):
 ```
 $dirtybits> git clone https://github.com/LMDB/lmdb.git
 ```
