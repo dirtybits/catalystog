@@ -39,7 +39,7 @@ $dirtybits/boost> ./bootstrap.sh
 $dirtybits/boost> ./b2 link=static -j 8 --build-dir=build64 --stagedir=stage
 cd ..
 ```
-Git-clone (or git-pull) Catalyst source code in that folder:
+Git-clone (or git-pull) Catalyst source code into that folder:
 ```
 $dirtybits> git clone https://github.com/dirtybits/catalyst.git
 ```
