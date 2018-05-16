@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -13,7 +14,7 @@
 #include "crypto/hash.hpp"
 #include "logging/LoggerMessage.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 class Config;
 
@@ -171,4 +172,4 @@ private:
 	std::chrono::steady_clock::time_point log_redo_block_timestamp;
 };
 
-}  // namespace bytecoin
+}  // namespace catalyst
