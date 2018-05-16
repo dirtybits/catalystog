@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "Config.hpp"
@@ -9,17 +10,17 @@
 #include "common/Base64.hpp"
 #include "platform/PathTools.hpp"
 
-static void parse_peer_and_add_to_container(const std::string &str, std::vector<bytecoin::NetworkAddress> &container) {
-	bytecoin::NetworkAddress na{};
+static void parse_peer_and_add_to_container(const std::string &str, std::vector<catalyst::NetworkAddress> &container) {
+	catalyst::NetworkAddress na{};
 	if (!common::parse_ip_address_and_port(str, na.ip, na.port))
 		throw std::runtime_error("Wrong address format " + str + ", should be ip:port");
 	container.push_back(na);
 }
 
 using namespace common;
-using namespace bytecoin;
+using namespace catalyst;
 
-const static UUID BYTECOIN_NETWORK{{0x11, 0x10, 0x01, 0x11, 0x11, 0x00, 0x01, 0x01, 0x10, 0x11, 0x00, 0x12, 0x10, 0x11,
+const static UUID CATALYST_NETWORK{{0x11, 0x10, 0x01, 0x11, 0x11, 0x00, 0x01, 0x01, 0x10, 0x11, 0x00, 0x12, 0x10, 0x11,
     0x01, 0x10}};  // Bender's nightmare
 
 Config::Config(common::CommandLine &cmd)
@@ -28,14 +29,14 @@ Config::Config(common::CommandLine &cmd)
     , blocks_file_name(parameters::CRYPTONOTE_BLOCKS_FILENAME)
     , block_indexes_file_name(parameters::CRYPTONOTE_BLOCKINDEXES_FILENAME)
     , crypto_note_name(CRYPTONOTE_NAME)
-    , network_id(BYTECOIN_NETWORK)
+    , network_id(CATALYST_NETWORK)
     , p2p_bind_port(P2P_DEFAULT_PORT)
     , p2p_external_port(P2P_DEFAULT_PORT)
     , p2p_bind_ip("0.0.0.0")
-    , bytecoind_bind_port(RPC_DEFAULT_PORT)
-    , bytecoind_bind_ip("127.0.0.1")  // Less attack vectors from outside for ordinary uses
-    , bytecoind_remote_port(0)
-    , bytecoind_remote_ip("127.0.0.1")
+    , catalystd_bind_port(RPC_DEFAULT_PORT)
+    , catalystd_bind_ip("127.0.0.1")  // Less attack vectors from outside for ordinary uses
+    , catalystd_remote_port(0)
+    , catalystd_remote_ip("127.0.0.1")
     , walletd_bind_port(WALLET_RPC_DEFAULT_PORT)
     , walletd_bind_ip("127.0.0.1")  // Connection to wallet allows spending
     , p2p_local_white_list_limit(P2P_LOCAL_WHITE_PEERLIST_LIMIT)
@@ -80,33 +81,33 @@ Config::Config(common::CommandLine &cmd)
 		    "Setting --ssl_certificate_password impossible - this binary is built without OpenSSL");
 #endif
 	}
-	if (const char *pa = cmd.get("--bytecoind-authorization")) {
-		bytecoind_authorization = common::base64::encode(BinaryArray(pa, pa + strlen(pa)));
+	if (const char *pa = cmd.get("--catalystd-authorization")) {
+		catalystd_authorization = common::base64::encode(BinaryArray(pa, pa + strlen(pa)));
 	}
-	if (const char *pa = cmd.get("--bytecoind-bind-address")) {
-		if (!common::parse_ip_address_and_port(pa, bytecoind_bind_ip, bytecoind_bind_port))
+	if (const char *pa = cmd.get("--catalystd-bind-address")) {
+		if (!common::parse_ip_address_and_port(pa, catalystd_bind_ip, catalystd_bind_port))
 			throw std::runtime_error("Wrong address format " + std::string(pa) + ", should be ip:port");
 	}
-	if (const char *pa = cmd.get("--bytecoind-remote-address")) {
+	if (const char *pa = cmd.get("--catalystd-remote-address")) {
 		std::string addr         = pa;
 		const std::string prefix = "https://";
 		if (addr.find(prefix) == 0) {
 #if !platform_USE_SSL
 			throw std::runtime_error(
-			    "Using https in --bytecoind-remote-address impossible - this binary is built without OpenSSL");
+			    "Using https in --catalystd-remote-address impossible - this binary is built without OpenSSL");
 #endif
 			std::string sip;
 			std::string sport;
 			if (!split_string(addr.substr(prefix.size()), ":", sip, sport))
 				throw std::runtime_error(
 				    "Wrong address format " + addr + ", should be <ip>:<port> or https://<host>:<port>");
-			bytecoind_remote_port = boost::lexical_cast<uint16_t>(sport);
-			bytecoind_remote_ip   = prefix + sip;
+			catalystd_remote_port = boost::lexical_cast<uint16_t>(sport);
+			catalystd_remote_ip   = prefix + sip;
 		} else {
 			const std::string prefix2 = "http://";
 			if (addr.find(prefix2) == 0)
 				addr = addr.substr(prefix2.size());
-			if (!common::parse_ip_address_and_port(addr, bytecoind_remote_ip, bytecoind_remote_port))
+			if (!common::parse_ip_address_and_port(addr, catalystd_remote_ip, catalystd_remote_port))
 				throw std::runtime_error("Wrong address format " + addr + ", should be ip:port");
 		}
 	}
@@ -126,7 +127,7 @@ Config::Config(common::CommandLine &cmd)
 		parse_peer_and_add_to_container(pa, exclusive_nodes);
 
 	if (seed_nodes.empty() && !is_testnet)
-		for (auto &&sn : bytecoin::SEED_NODES) {
+		for (auto &&sn : catalyst::SEED_NODES) {
 			NetworkAddress addr;
 			if (!common::parse_ip_address_and_port(sn, addr.ip, addr.port))
 				continue;
@@ -169,15 +170,15 @@ Config::Config(common::CommandLine &cmd)
 	            "\xEF\xBB\xBF# Edit this file to switch data folder\r\n"
 	            "# Uncomment line below and point it to desired blockchain location. Only full path is supported\r\n"
 	            "# You should manually move content of old data folder to new location after completely stopping "
-	            "bytecoin\r\n\r\n"
-	            "# D:\\BlockChains\\bytecoin\r\n";
+	            "catalyst\r\n\r\n"
+	            "# D:\\BlockChains\\catalyst\r\n";
 	#else
 	        const char content[] =
 	            "# Edit this file to switch data folder\n"
 	            "# Uncomment line below and point it to desired blockchain location. Note, ~ is unsupported, use full "
 	            "path\n"
 	            "# You should manually move content of old data folder to new location after completely stopping "
-	            "bytecoin\n\n"
+	            "catalyst\n\n"
 	            "# /some/far/away/folder\n";
 	#endif
 	        common::save_file(data_folder + "/" + "data_folder_path.txt", content);
