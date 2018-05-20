@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "TransactionExtra.hpp"
@@ -9,7 +10,7 @@
 #include "seria/BinaryInputStream.hpp"
 #include "seria/BinaryOutputStream.hpp"
 
-namespace bytecoin {
+namespace catalyst{
 
 template<typename T>
 bool find_transaction_extra_field_by_type(const std::vector<TransactionExtraField> &tx_extra_fields, T &field) {
@@ -203,7 +204,7 @@ bool get_payment_id_from_tx_extra(const BinaryArray &extra, Hash &payment_id) {
 }
 }
 
-static void do_serialize(bytecoin::TransactionExtraMergeMiningTag &tag, seria::ISeria &s) {
+static void do_serialize(catalyst::TransactionExtraMergeMiningTag &tag, seria::ISeria &s) {
 	s.begin_object();
 	uint64_t depth = static_cast<uint64_t>(tag.depth);
 	seria_kv("depth", depth, s);
@@ -212,7 +213,7 @@ static void do_serialize(bytecoin::TransactionExtraMergeMiningTag &tag, seria::I
 	s.end_object();
 }
 
-void seria::ser(bytecoin::TransactionExtraMergeMiningTag &v, ISeria &s) {
+void seria::ser(catalyst::TransactionExtraMergeMiningTag &v, ISeria &s) {
 	if (s.is_input()) {
 		std::string field;
 		s(field);
