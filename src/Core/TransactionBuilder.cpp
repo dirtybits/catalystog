@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "TransactionBuilder.hpp"
@@ -13,7 +14,7 @@
 #include "http/JsonRpc.h"
 #include "seria/BinaryOutputStream.hpp"
 
-using namespace bytecoin;
+using namespace catalyst;
 
 bool TransactionBuilder::derive_public_key(const AccountPublicAddress &to,
     const SecretKey &tx_key,
@@ -186,7 +187,7 @@ void UnspentSelector::reset(Unspents &&unspents) {
 
 void UnspentSelector::add_mixed_inputs(const SecretKey &view_secret_key,
     const std::unordered_map<PublicKey, WalletRecord> &wallet_records, TransactionBuilder &builder, uint32_t anonymity,
-    api::bytecoind::GetRandomOutputs::Response &&ra_response) {
+    api::catalystd::GetRandomOutputs::Response &&ra_response) {
 	for (auto uu : m_used_unspents) {
 		std::vector<api::Output> mix_outputs;
 		auto &our_ra_outputs = ra_response.outputs[uu.amount];
