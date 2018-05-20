@@ -1,13 +1,14 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018 The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "CryptoNoteTools.hpp"
 #include "TransactionExtra.hpp"
 #include "seria/ISeria.hpp"
 
-using namespace bytecoin;
+using namespace catalyst;
 
-Hash bytecoin::get_base_transaction_hash(const BaseTransaction &tx) {
+Hash catalyst::get_base_transaction_hash(const BaseTransaction &tx) {
 	if (tx.version < 2)
 		return get_object_hash(tx);
 	BinaryArray data{{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -56,7 +57,7 @@ void decompose_amount_into_digits(
 	}
 }
 
-void bytecoin::decompose_amount(Amount amount, Amount dust_threshold, std::vector<Amount> &decomposed_amounts) {
+void catalyst::decompose_amount(Amount amount, Amount dust_threshold, std::vector<Amount> &decomposed_amounts) {
 	decompose_amount_into_digits(amount, dust_threshold, [&](Amount amount) { decomposed_amounts.push_back(amount); },
 	    [&](Amount dust) {
 		    Amount du0 = dust % 1000;
@@ -68,7 +69,7 @@ void bytecoin::decompose_amount(Amount amount, Amount dust_threshold, std::vecto
 		});
 }
 
-size_t bytecoin::get_maximum_tx_size(size_t input_count, size_t output_count, size_t mixin_count) {
+size_t catalyst::get_maximum_tx_size(size_t input_count, size_t output_count, size_t mixin_count) {
 	const size_t KEY_IMAGE_SIZE                    = sizeof(crypto::KeyImage);
 	const size_t OUTPUT_KEY_SIZE                   = sizeof(crypto::PublicKey);
 	const size_t AMOUNT_SIZE                       = sizeof(uint64_t) + 2;  // varint
@@ -92,7 +93,7 @@ size_t bytecoin::get_maximum_tx_size(size_t input_count, size_t output_count, si
 	return header_size + outputs_size + input_size * input_count;
 }
 
-bool bytecoin::get_tx_fee(const Transaction &tx, uint64_t &fee) {
+bool catalyst::get_tx_fee(const Transaction &tx, uint64_t &fee) {
 	uint64_t amount_in  = 0;
 	uint64_t amount_out = 0;
 
@@ -114,7 +115,7 @@ bool bytecoin::get_tx_fee(const Transaction &tx, uint64_t &fee) {
 	return true;
 }
 
-uint64_t bytecoin::get_tx_fee(const Transaction &tx) {
+uint64_t catalyst::get_tx_fee(const Transaction &tx) {
 	uint64_t r = 0;
 	if (!get_tx_fee(tx, r))
 		return 0;
