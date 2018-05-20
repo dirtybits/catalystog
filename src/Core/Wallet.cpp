@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <http/JsonRpc.h>
@@ -11,7 +12,7 @@
 #include "platform/Files.hpp"
 #include "platform/PathTools.hpp"
 
-using namespace bytecoin;
+using namespace catalyst;
 
 static const uint8_t SERIALIZATION_VERSION_V2 = 6;
 
