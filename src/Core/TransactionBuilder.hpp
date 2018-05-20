@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -10,7 +11,7 @@
 #include "crypto/chacha8.h"
 #include "rpc_api.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 class Wallet;
 class Currency;
@@ -94,4 +95,4 @@ public:
 	const std::vector<Amount> &get_ra_amounts() const { return m_ra_amounts; }
 };
 
-}  // namespace bytecoin
+}  // namespace catalyst
