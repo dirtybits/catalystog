@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -10,7 +11,7 @@
 #include "crypto/chacha8.h"
 #include "platform/Files.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 using WalletKey  = crypto::chacha8_key;
 using HistoryKey = crypto::chacha8_key;
@@ -96,4 +97,4 @@ public:
 	History load_history(const Hash &bid) const;
 };
 
-}  // namespace bytecoin
+}  // namespace catalyst
