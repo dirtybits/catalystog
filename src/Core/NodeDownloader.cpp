@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <iostream>
@@ -7,7 +8,7 @@
 #include "seria/BinaryInputStream.hpp"
 #include "seria/BinaryOutputStream.hpp"
 
-using namespace bytecoin;
+using namespace catalyst;
 
 static const bool multicore = true;
 
@@ -76,7 +77,7 @@ uint32_t Node::DownloaderV11::get_known_block_count(uint32_t my) const {
 	return my;
 }
 
-void Node::DownloaderV11::on_connect(P2PClientBytecoin *who) {
+void Node::DownloaderV11::on_connect(P2PClientCatalyst *who) {
 	if (who->is_incoming())  // Never sync from incoming
 		return;
 	m_node->m_log(logging::TRACE) << "DownloaderV11::on_connect " << who->get_address() << std::endl;
@@ -91,7 +92,7 @@ void Node::DownloaderV11::on_connect(P2PClientBytecoin *who) {
 	}
 }
 
-void Node::DownloaderV11::on_disconnect(P2PClientBytecoin *who) {
+void Node::DownloaderV11::on_disconnect(P2PClientCatalyst *who) {
 	if (who->is_incoming())
 		return;
 	m_node->m_log(logging::TRACE) << "DownloaderV11::on_disconnect " << who->get_address() << std::endl;
@@ -124,7 +125,7 @@ void Node::DownloaderV11::on_chain_timer() {
 	}
 }
 
-void Node::DownloaderV11::on_msg_notify_request_chain(P2PClientBytecoin *who,
+void Node::DownloaderV11::on_msg_notify_request_chain(P2PClientCatalyst *who,
     const NOTIFY_RESPONSE_CHAIN_ENTRY::request &req) {
 	if (m_chain_client != who || !m_chain.empty())
 		return;  // TODO - who just sent us chain we did not ask, ban
@@ -180,8 +181,8 @@ static const size_t GOOD_LAG = 5;  // lagging by 5 blocks is ok for us
 void Node::DownloaderV11::advance_chain() {
 	if (m_chain_client || !m_chain.empty())
 		return;
-	std::vector<P2PClientBytecoin *> lagging_clients;
-	std::vector<P2PClientBytecoin *> sorted_clients;
+	std::vector<P2PClientCatalyst *> lagging_clients;
+	std::vector<P2PClientCatalyst *> sorted_clients;
 	const auto now = m_node->m_p2p.get_local_time();
 	for (auto &&who : m_good_clients) {
 		if (who.first->get_last_received_sync_data().current_height + GOOD_LAG < m_node->m_block_chain.get_tip_height())
@@ -189,7 +190,7 @@ void Node::DownloaderV11::advance_chain() {
 		else
 			sorted_clients.push_back(who.first);
 	}
-	std::sort(sorted_clients.begin(), sorted_clients.end(), [](P2PClientBytecoin *a, P2PClientBytecoin *b) -> bool {
+	std::sort(sorted_clients.begin(), sorted_clients.end(), [](P2PClientCatalyst *a, P2PClientCatalyst *b) -> bool {
 		return a->get_last_received_sync_data().current_height < b->get_last_received_sync_data().current_height;
 	});
 	if (!lagging_clients.empty()) {
@@ -223,14 +224,14 @@ void Node::DownloaderV11::advance_chain() {
 
 void Node::DownloaderV11::on_msg_timed_sync(const CORE_SYNC_DATA &payload_data) { advance_download(Hash{}); }
 
-void Node::DownloaderV11::on_msg_notify_request_objects(P2PClientBytecoin *who,
+void Node::DownloaderV11::on_msg_notify_request_objects(P2PClientCatalyst *who,
     const NOTIFY_RESPONSE_GET_OBJECTS::request &req) {
 	for (auto &&rb : req.blocks) {
 		Hash bid;
 		try {
 			BlockTemplate bheader;
 			seria::from_binary(bheader, rb.block);
-			bid = bytecoin::get_block_hash(bheader);
+			bid = catalyst::get_block_hash(bheader);
 		} catch (const std::exception &ex) {
 			std::cout << "Exception " << ex.what() << " while parsing returned block, banning " << who->get_address()
 			          << std::endl;
@@ -362,7 +363,7 @@ void Node::DownloaderV11::advance_download(Hash last_downloaded_block) {
 
 	while (m_who_downloaded_block.size() > TOTAL_DOWNLOAD_BLOCKS)
 		m_who_downloaded_block.pop_front();
-	std::map<P2PClientBytecoin *, size_t> who_downloaded_counter;
+	std::map<P2PClientCatalyst *, size_t> who_downloaded_counter;
 	for (auto lit = m_who_downloaded_block.begin(); lit != m_who_downloaded_block.end(); ++lit)
 		who_downloaded_counter[*lit] += 1;
 	auto idea_now = std::chrono::steady_clock::now();
@@ -371,7 +372,7 @@ void Node::DownloaderV11::advance_download(Hash last_downloaded_block) {
 			continue;  // downloaded or downloading
 		if (total_downloading_blocks >= TOTAL_DOWNLOAD_BLOCKS)
 			break;
-		P2PClientBytecoin *ready_client = nullptr;
+		P2PClientCatalyst *ready_client = nullptr;
 		size_t ready_counter            = std::numeric_limits<size_t>::max();
 		size_t ready_speed              = 1;
 		for (auto &&who : m_good_clients) {
