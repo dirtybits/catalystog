@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -9,7 +10,7 @@
 #include "CryptoNote.hpp"
 #include "crypto/hash.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 class Currency {  // Consensus calcs depend on those parameters
 public:
@@ -123,4 +124,4 @@ Hash get_block_hash(const BlockTemplate &);
 Hash get_block_long_hash(const BlockTemplate &, crypto::CryptoNightContext &);
 Hash get_auxiliary_block_header_hash(const BlockTemplate &);  // Without parent block, for merge mining calculations
 
-}  // namespace bytecoin
+}  // namespace catalyst
