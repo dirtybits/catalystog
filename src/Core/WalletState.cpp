@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "WalletState.hpp"
@@ -32,7 +33,7 @@ static const std::string UNLOCK_TIME_PREFIX  = "unlt/";
 
 static const std::string ADDRESSES_PREFIX = "ad/";
 
-using namespace bytecoin;
+using namespace catalyst;
 using namespace platform;
 
 WalletPreparatorMulticore::WalletPreparatorMulticore() {
@@ -93,7 +94,7 @@ void WalletPreparatorMulticore::thread_run() {
 		SecretKey view_secret_key;
 		Height height          = 0;
 		int local_work_counter = 0;
-		api::bytecoind::SyncBlocks::SyncBlock sync_block;
+		api::catalystd::SyncBlocks::SyncBlock sync_block;
 		std::vector<std::vector<uint32_t>> global_indices;
 		{
 			std::unique_lock<std::mutex> lock(mu);
@@ -124,12 +125,12 @@ void WalletPreparatorMulticore::thread_run() {
 
 void WalletPreparatorMulticore::cancel_work() {
 	std::unique_lock<std::mutex> lock(mu);
-	work = api::bytecoind::SyncBlocks::Response();
+	work = api::catalystd::SyncBlocks::Response();
 	prepared_blocks.clear();
 	work_counter += 1;
 }
 
-void WalletPreparatorMulticore::start_work(const api::bytecoind::SyncBlocks::Response &new_work,
+void WalletPreparatorMulticore::start_work(const api::catalystd::SyncBlocks::Response &new_work,
     const SecretKey &view_secret_key) {
 	std::unique_lock<std::mutex> lock(mu);
 	work            = new_work;
@@ -348,7 +349,7 @@ std::vector<WalletRecord> WalletState::generate_new_addresses(const std::vector<
 	return result;
 }
 
-bool WalletState::sync_with_blockchain(api::bytecoind::SyncBlocks::Response &resp) {
+bool WalletState::sync_with_blockchain(api::catalystd::SyncBlocks::Response &resp) {
 	if (resp.blocks.empty())  // Our creation timestamp > last block timestamp, so
 		                      // no blocks
 		return true;
@@ -412,7 +413,7 @@ std::vector<Hash> WalletState::get_tx_pool_hashes() const {
 	return std::vector<Hash>(m_pool_hashes.begin(), m_pool_hashes.end());
 }
 
-bool WalletState::sync_with_blockchain(api::bytecoind::SyncMemPool::Response &resp) {
+bool WalletState::sync_with_blockchain(api::catalystd::SyncMemPool::Response &resp) {
 	for (auto tid : resp.removed_hashes) {
 		if (m_pool_hashes.erase(tid) != 0) {
 		}
@@ -527,7 +528,7 @@ bool WalletState::redo_block(const api::BlockHeader &header, const PreparedWalle
 		delta_state.apply(this);
 	} catch (const std::exception &ex) {
 		std::cout << "Exception in delta_state.apply, probably out of disk space ex.what=" << ex.what() << std::endl;
-		std::exit(api::BYTECOIND_DATABASE_ERROR);
+		std::exit(api::CATALYSTD_DATABASE_ERROR);
 	}
 	return true;
 }
@@ -562,7 +563,7 @@ void WalletState::undo_block(Height height) {
 	} catch (const std::exception &ex) {
 		std::cout << "Exception in WalletState undo_block, probably out of disk space ex.what=" << ex.what()
 		          << std::endl;
-		std::exit(api::BYTECOIND_DATABASE_ERROR);
+		std::exit(api::CATALYSTD_DATABASE_ERROR);
 	}
 }
 
