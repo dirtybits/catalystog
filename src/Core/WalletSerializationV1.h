@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -8,7 +9,7 @@
 #include "crypto/chacha8.h"
 #include "seria/ISeria.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 class WalletSerializerV1 {
 public:
@@ -49,4 +50,4 @@ private:
 	std::vector<WalletRecord> &m_wallets_container;
 };
 
-}  // namespace bytecoin
+}  // namespace catalyst
