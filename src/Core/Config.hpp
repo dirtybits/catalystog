@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018 The Catalyst Project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -11,7 +12,7 @@
 #include "common/CommandLine.hpp"
 #include "p2p/P2pProtocolTypes.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 class Config {  // Consensus does not depend on those parameters
 public:
@@ -37,11 +38,11 @@ public:
 
 	std::string ssl_certificate_pem_file;
 	boost::optional<std::string> ssl_certificate_password;
-	std::string bytecoind_authorization;
-	uint16_t bytecoind_bind_port;
-	std::string bytecoind_bind_ip;
-	uint16_t bytecoind_remote_port;
-	std::string bytecoind_remote_ip;
+	std::string catalystd_authorization;
+	uint16_t catalystd_bind_port;
+	std::string catalystd_bind_ip;
+	uint16_t catalystd_remote_port;
+	std::string catalystd_remote_ip;
 
 	std::string walletd_authorization;
 	uint16_t walletd_bind_port;
@@ -70,4 +71,4 @@ public:
 	std::string get_data_folder(const std::string &subdir) const;
 };
 
-}  // namespace bytecoin
+}  // namespace catalyst
