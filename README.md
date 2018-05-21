@@ -41,7 +41,7 @@ cd ..
 ```
 Git-clone (or git-pull) Catalyst source code into that folder:
 ```
-$cstdev> git clone https://github.com/cstdev/catalyst.git
+$cstdev> git clone https://github.com/dirtybits/catalyst.git
 ```
 Put LMDB source code in dirtybits folder (source files are referenced via relative paths, so you do not need to separately build it):
 ```
