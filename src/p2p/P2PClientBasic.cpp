@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "P2PClientBasic.hpp"
@@ -9,10 +10,10 @@ const float HANDSHAKE_TIMEOUT  = 30;
 const float MESSAGE_TIMEOUT    = 60 * 6;
 const float TIMED_SYNC_TIMEOUT = 60 * 4;
 
-using namespace bytecoin;
+using namespace catalyst;
 
 template<typename Cmd>
-bytecoin::P2PClientBasic::LevinHandlerFunction levin_method(void (bytecoin::P2PClientBasic::*handler)(Cmd &&)) {
+catalyst::P2PClientBasic::LevinHandlerFunction levin_method(void (catalyst::P2PClientBasic::*handler)(Cmd &&)) {
 	return [handler](P2PClientBasic *who, BinaryArray &&body) {
 
 		Cmd req{};
@@ -34,7 +35,7 @@ std::map<std::pair<uint32_t, bool>, P2PClientBasic::LevinHandlerFunction> P2PCli
 std::map<std::pair<uint32_t, bool>, P2PClientBasic::LevinHandlerFunction> P2PClientBasic::after_handshake_handlers = {
     {{COMMAND_TIMED_SYNC::ID, false}, levin_method<COMMAND_TIMED_SYNC::request>(&P2PClientBasic::msg_timed_sync)},
     {{COMMAND_TIMED_SYNC::ID, true}, levin_method<COMMAND_TIMED_SYNC::response>(&P2PClientBasic::msg_timed_sync)},
-#if bytecoin_ALLOW_DEBUG_COMMANDS
+#if catalyst_ALLOW_DEBUG_COMMANDS
     {{COMMAND_REQUEST_NETWORK_STATE::ID, false},
         levin_method<COMMAND_REQUEST_NETWORK_STATE::request>(&P2PClientBasic::on_msg_network_state)},
     {{COMMAND_REQUEST_NETWORK_STATE::ID, true},
