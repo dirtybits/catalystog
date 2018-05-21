@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "WalletSync.hpp"
@@ -13,7 +14,7 @@
 constexpr float STATUS_POLL_PERIOD  = 0.1f;
 constexpr float STATUS_ERROR_PERIOD = 5;
 
-using namespace bytecoin;
+using namespace catalyst;
 
 WalletSync::WalletSync(
     logging::ILogger &log, const Config &config, WalletState &wallet_state, std::function<void()> state_changed_handler)
@@ -22,10 +23,10 @@ WalletSync::WalletSync(
     , m_config(config)
     , m_sync_error("CONNECTING")
     , m_status_timer(std::bind(&WalletSync::send_get_status, this))
-    , m_sync_agent(config.bytecoind_remote_ip,
-          config.bytecoind_remote_port ? config.bytecoind_remote_port : config.bytecoind_bind_port)
-    , m_commands_agent(config.bytecoind_remote_ip,
-          config.bytecoind_remote_port ? config.bytecoind_remote_port : config.bytecoind_bind_port)
+    , m_sync_agent(config.catalystd_remote_ip,
+          config.catalystd_remote_port ? config.catalystd_remote_port : config.catalystd_bind_port)
+    , m_commands_agent(config.catalystd_remote_ip,
+          config.catalystd_remote_port ? config.catalystd_remote_port : config.catalystd_bind_port)
     , m_wallet_state(wallet_state)
     , m_commit_timer(std::bind(&WalletSync::db_commit, this)) {
 	advance_sync();
@@ -38,18 +39,18 @@ void WalletSync::db_commit() {
 }
 
 void WalletSync::send_get_status() {
-	api::bytecoind::GetStatus::Request req;
+	api::catalystd::GetStatus::Request req;
 	req.top_block_hash           = m_wallet_state.get_tip_bid();
 	req.transaction_pool_version = m_wallet_state.get_tx_pool_version();
 	req.outgoing_peer_count      = m_last_node_status.outgoing_peer_count;
 	req.incoming_peer_count      = m_last_node_status.incoming_peer_count;
 	req.lower_level_error        = m_last_node_status.lower_level_error;
 	json_rpc::Request json_send_raw_req;
-	json_send_raw_req.set_method(api::bytecoind::GetStatus::method());
+	json_send_raw_req.set_method(api::catalystd::GetStatus::method());
 	json_send_raw_req.set_params(req);
 	http::RequestData req_header;
-	req_header.r.set_firstline("POST", api::bytecoind::url(), 1, 1);
-	req_header.r.basic_authorization = m_config.bytecoind_authorization;
+	req_header.r.set_firstline("POST", api::catalystd::url(), 1, 1);
+	req_header.r.basic_authorization = m_config.catalystd_authorization;
 	req_header.set_body(json_send_raw_req.get_body());
 
 	m_sync_request.reset(new http::Request(m_sync_agent, std::move(req_header),
@@ -59,7 +60,7 @@ void WalletSync::send_get_status() {
 			    advance_sync();
 			    return;
 		    }
-		    api::bytecoind::GetStatus::Response resp;
+		    api::catalystd::GetStatus::Response resp;
 		    json_rpc::parse_response(response.body, resp);
 		    m_last_node_status = resp;
 		    m_sync_error       = std::string();
@@ -96,16 +97,16 @@ void WalletSync::advance_sync() {
 }
 
 void WalletSync::send_sync_pool() {
-	api::bytecoind::SyncMemPool::Request msg;
+	api::catalystd::SyncMemPool::Request msg;
 	msg.known_hashes = m_wallet_state.get_tx_pool_hashes();
 	http::RequestData req_header;
-	req_header.r.set_firstline("POST", api::bytecoind::SyncMemPool::bin_method(), 1, 1);
-	req_header.r.basic_authorization = m_config.bytecoind_authorization;
+	req_header.r.set_firstline("POST", api::catalystd::SyncMemPool::bin_method(), 1, 1);
+	req_header.r.basic_authorization = m_config.catalystd_authorization;
 	req_header.set_body(seria::to_binary_str(msg));
 	m_sync_request = std::make_unique<http::Request>(m_sync_agent, std::move(req_header),
 	    [&](http::ResponseData &&response) {
 		    m_sync_request.reset();
-		    api::bytecoind::SyncMemPool::Response resp;
+		    api::catalystd::SyncMemPool::Response resp;
 		    seria::from_binary(resp, response.body);
 		    m_last_node_status = resp.status;
 		    m_sync_error       = "WRONG_BLOCKCHAIN";
@@ -125,17 +126,17 @@ void WalletSync::send_sync_pool() {
 }
 
 void WalletSync::send_get_blocks() {
-	api::bytecoind::SyncBlocks::Request msg;
+	api::catalystd::SyncBlocks::Request msg;
 	msg.sparse_chain          = m_wallet_state.get_sparse_chain();
 	msg.first_block_timestamp = m_wallet_state.get_wallet().get_oldest_timestamp();
 	http::RequestData req_header;
-	req_header.r.set_firstline("POST", api::bytecoind::SyncBlocks::bin_method(), 1, 1);
-	req_header.r.basic_authorization = m_config.bytecoind_authorization;
+	req_header.r.set_firstline("POST", api::catalystd::SyncBlocks::bin_method(), 1, 1);
+	req_header.r.basic_authorization = m_config.catalystd_authorization;
 	req_header.set_body(seria::to_binary_str(msg));
 	m_sync_request = std::make_unique<http::Request>(m_sync_agent, std::move(req_header),
 	    [&](http::ResponseData &&response) {
 		    m_sync_request.reset();
-		    api::bytecoind::SyncBlocks::Response resp;
+		    api::catalystd::SyncBlocks::Response resp;
 		    seria::from_binary(resp, response.body);
 		    m_last_node_status = resp.status;
 		    m_sync_error       = "WRONG_BLOCKCHAIN";
