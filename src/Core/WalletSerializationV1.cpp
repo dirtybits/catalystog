@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "WalletSerializationV1.h"
@@ -49,7 +50,7 @@ struct UnlockTransactionJobDto {
 /*struct WalletTransactionDto {
         WalletTransactionDto() {}
 
-        WalletTransactionDto(const bytecoin::WalletTransaction &wallet) {
+        WalletTransactionDto(const catalyst::WalletTransaction &wallet) {
                 state         = wallet.state;
                 timestamp     = wallet.timestamp;
                 block_height  = wallet.block_height;
@@ -61,7 +62,7 @@ struct UnlockTransactionJobDto {
                 extra         = wallet.extra;
         }
 
-        bytecoin::WalletTransactionState state;
+        catalyst::WalletTransactionState state;
         uint64_t timestamp;
         uint32_t block_height;
         Hash hash;
@@ -76,7 +77,7 @@ struct UnlockTransactionJobDto {
 struct WalletTransferDto {
         explicit WalletTransferDto(uint32_t version) : amount(0), type(0),
 version(version) {}
-        WalletTransferDto(const bytecoin::WalletTransfer &tr, uint32_t version)
+        WalletTransferDto(const catalyst::WalletTransfer &tr, uint32_t version)
 : WalletTransferDto(version) {
                 address = tr.address;
                 amount  = tr.amount;
@@ -90,7 +91,7 @@ version(version) {}
         uint32_t version;
 };*/
 
-/*void serialize(WalletRecordDto &v, bytecoin::ISerializer &s) {
+/*void serialize(WalletRecordDto &v, catalyst::ISerializer &s) {
         s(v.spend_public_key, "spend_public_key");
         s(v.spend_secret_key, "spend_secret_key");
         s(v.pending_balance, "pending_balance");
@@ -161,7 +162,7 @@ void ser_members(KeysStorage &v, ISeria &s) {
 }
 }
 
-namespace bytecoin {
+namespace catalyst {
 
 const uint32_t WalletSerializerV1::SERIALIZATION_VERSION = 5;
 
@@ -333,4 +334,4 @@ void WalletSerializerV1::load_wallets(common::IInputStream &source, CryptoContex
 	}
 }
 
-}  // namespace bytecoin
+}  // namespace catalyst
