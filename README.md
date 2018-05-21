@@ -11,8 +11,8 @@ All commands below are adapted for Ubuntu, other distributions may need another 
 Building with standard options
 Create directory bcndev somewhere and go there:
 ```
-$> mkdir dirtybits
-$> cd dirtybits
+$> mkdir cstdev
+$> cd cstdev
 ```
 To go futher you have to have a number of packages and utilities.
 
@@ -35,26 +35,26 @@ $> cat /usr/include/boost/version.hpp | grep "BOOST_LIB_VERSION"
 If version is too old, download boost from boost.org, unpack it into a folder inside bcndev and rename it from boost_1_66_0 or similar to just boost Build boost
 ```
 $> cd boost
-$dirtybits/boost> ./bootstrap.sh
-$dirtybits/boost> ./b2 link=static -j 8 --build-dir=build64 --stagedir=stage
+$cstdev/boost> ./bootstrap.sh
+$cstdev/boost> ./b2 link=static -j 8 --build-dir=build64 --stagedir=stage
 cd ..
 ```
 Git-clone (or git-pull) Catalyst source code into that folder:
 ```
-$dirtybits> git clone https://github.com/dirtybits/catalyst.git
+$cstdev> git clone https://github.com/cstdev/catalyst.git
 ```
 Put LMDB source code in dirtybits folder (source files are referenced via relative paths, so you do not need to separately build it):
 ```
-$dirtybits> git clone https://github.com/LMDB/lmdb.git
+$cstdev> git clone https://github.com/LMDB/lmdb.git
 ```
 Create build directory inside catalyst, go there and run CMake and Make:
 ```
-$dirtybits> mkdir catalyst/build
-$dirtybits> cd catalyst/build
-$dirtybits/catalyst/build> cmake -DUSE_SSL=0 ..
-$dirtybits/catalyst/build> time make -j4
+$cstdev> mkdir catalyst/build
+$cstdev> cd catalyst/build
+$cstdev/catalyst/build> cmake -DUSE_SSL=0 ..
+$cstdev/catalyst/build> time make -j4
 ```
 Check built binaries by running them from ../bin folder
 ```
-$dirtybits/catalyst/build> ../bin/catalystd -v
+$cstdev/catalyst/build> ../bin/catalystd -v
 ```
