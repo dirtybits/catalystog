@@ -1,11 +1,11 @@
 # Catalyst
 Catalyst (CST) is a new cryptocurrency based on CryptoNote/Bytecoin protocols. A coin for The People.
 
-## THIS IS A WORK IN PROGRESS, expect errors to start popping up. Thank you for your patience.
+## THIS IS A WORK IN PROGRESS, expect errors. Thank you for your patience.
 
 ## Building Catalyst on *nix
 
-Building on Linux 64-bit
+Building on Linux 64-bit. 
 All commands below are adapted for Ubuntu, other distributions may need another command set.
 
 Building with standard options
