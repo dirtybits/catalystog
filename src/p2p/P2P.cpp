@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "P2P.hpp"
@@ -12,7 +13,7 @@
 const float RECONNECT_TIMEOUT           = 10;    // when we tried all addresses, make a small delay
 const float NO_INTERNET_RECONNECT_DELAY = 0.5f;  // when network is unreachable, do not try too often
 
-using namespace bytecoin;
+using namespace catalyst;
 
 P2PClient::P2PClient(size_t header_size, bool incoming, D_handler d_handler)
     : sock([this](bool canread, bool canwrite) { advance_state(true); },
