@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -13,7 +14,7 @@
 #include "platform/DB.hpp"
 #include "rpc_api.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 class Config;
 
@@ -60,7 +61,7 @@ class WalletPreparatorMulticore {
 	bool quit = false;
 
 	std::map<Height, PreparedWalletBlock> prepared_blocks;
-	api::bytecoind::SyncBlocks::Response work;
+	api::catalystd::SyncBlocks::Response work;
 	int work_counter = 0;
 	SecretKey work_secret_key;
 	void thread_run();
@@ -69,7 +70,7 @@ public:
 	WalletPreparatorMulticore();
 	~WalletPreparatorMulticore();
 	void cancel_work();
-	void start_work(const api::bytecoind::SyncBlocks::Response &new_work, const SecretKey &view_secret_key);
+	void start_work(const api::catalystd::SyncBlocks::Response &new_work, const SecretKey &view_secret_key);
 	PreparedWalletBlock get_ready_work(Height height);
 };
 
@@ -121,8 +122,8 @@ public:
 	const api::BlockHeader &get_tip() const { return m_tip; }
 
 	std::vector<Hash> get_sparse_chain() const;
-	bool sync_with_blockchain(api::bytecoind::SyncBlocks::Response &);   // We move from it
-	bool sync_with_blockchain(api::bytecoind::SyncMemPool::Response &);  // We move from it
+	bool sync_with_blockchain(api::catalystd::SyncBlocks::Response &);   // We move from it
+	bool sync_with_blockchain(api::catalystd::SyncMemPool::Response &);  // We move from it
 	void add_transient_transaction(const Hash &tid, const TransactionPrefix &tx);
 
 	bool parse_raw_transaction(api::Transaction &ptx, const TransactionPrefix &tx, Hash tid) const;
@@ -213,4 +214,4 @@ private:
 	WalletPreparatorMulticore preparator;
 };
 
-}  // namespace bytecoin
+}  // namespace catalyst
