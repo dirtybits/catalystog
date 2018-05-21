@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -9,7 +10,7 @@
 #include "CryptoNote.hpp"
 #include "common/MemoryStreams.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 enum class LevinError : int32_t {
 	OK                                   = 0,
