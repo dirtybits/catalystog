@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -19,7 +20,7 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index_container.hpp>
 
-namespace bytecoin {
+namespace catalyst {
 class Config;
 class PeerDB {
 public:
