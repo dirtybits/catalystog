@@ -13,7 +13,7 @@
 #include "logging/LoggerMessage.hpp"
 #include "platform/Network.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 class Config;
 class P2P;
