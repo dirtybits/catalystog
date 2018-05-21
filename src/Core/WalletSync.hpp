@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -9,13 +10,13 @@
 #include "http/Agent.hpp"
 #include "http/JsonRpc.h"
 
-namespace bytecoin {
+namespace catalyst {
 
 class WalletSync {
 public:
 	explicit WalletSync(logging::ILogger &, const Config &, WalletState &, std::function<void()> state_changed_handler);
 
-	const api::bytecoind::GetStatus::Response &get_last_node_status() const { return m_last_node_status; }
+	const api::catalystd::GetStatus::Response &get_last_node_status() const { return m_last_node_status; }
 	std::string get_sync_error() const { return m_sync_error; }
 
 protected:
@@ -23,7 +24,7 @@ protected:
 	logging::LoggerRef m_log;
 	const Config &m_config;
 
-	api::bytecoind::GetStatus::Response m_last_node_status;
+	api::catalystd::GetStatus::Response m_last_node_status;
 	std::string m_sync_error;
 	platform::Timer m_status_timer;
 	http::Agent m_sync_agent;
@@ -44,4 +45,4 @@ protected:
 	void send_get_blocks();
 };
 
-}  // namespace bytecoin
+}  // namespace catalyst
