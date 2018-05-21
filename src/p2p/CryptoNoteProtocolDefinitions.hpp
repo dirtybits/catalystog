@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -6,7 +7,7 @@
 #include <list>
 #include "CryptoNote.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 
 enum { BC_COMMANDS_POOL_BASE = 2000 };
 
@@ -78,12 +79,12 @@ struct NOTIFY_REQUEST_TX_POOL {
 }
 
 namespace seria {
-void ser_members(bytecoin::RawBlockLegacy &v, seria::ISeria &s);
-void ser_members(bytecoin::NOTIFY_NEW_BLOCK::request &v, seria::ISeria &s);
-void ser_members(bytecoin::NOTIFY_NEW_TRANSACTIONS::request &v, seria::ISeria &s);
-void ser_members(bytecoin::NOTIFY_REQUEST_GET_OBJECTS::request &v, seria::ISeria &s);
-void ser_members(bytecoin::NOTIFY_RESPONSE_GET_OBJECTS::request &v, seria::ISeria &s);
-void ser_members(bytecoin::NOTIFY_REQUEST_CHAIN::request &v, seria::ISeria &s);
-void ser_members(bytecoin::NOTIFY_RESPONSE_CHAIN_ENTRY::request &v, seria::ISeria &s);
-void ser_members(bytecoin::NOTIFY_REQUEST_TX_POOL::request &v, seria::ISeria &s);
+void ser_members(catalyst::RawBlockLegacy &v, seria::ISeria &s);
+void ser_members(catalyst::NOTIFY_NEW_BLOCK::request &v, seria::ISeria &s);
+void ser_members(catalyst::NOTIFY_NEW_TRANSACTIONS::request &v, seria::ISeria &s);
+void ser_members(catalyst::NOTIFY_REQUEST_GET_OBJECTS::request &v, seria::ISeria &s);
+void ser_members(catalyst::NOTIFY_RESPONSE_GET_OBJECTS::request &v, seria::ISeria &s);
+void ser_members(catalyst::NOTIFY_REQUEST_CHAIN::request &v, seria::ISeria &s);
+void ser_members(catalyst::NOTIFY_RESPONSE_CHAIN_ENTRY::request &v, seria::ISeria &s);
+void ser_members(catalyst::NOTIFY_REQUEST_TX_POOL::request &v, seria::ISeria &s);
 }
