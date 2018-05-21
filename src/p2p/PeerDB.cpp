@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "PeerDB.hpp"
@@ -14,7 +15,7 @@
 #include "crypto/crypto.hpp"
 #include "seria/ISeria.hpp"
 
-using namespace bytecoin;
+using namespace catalyst;
 using namespace platform;
 
 namespace seria {
