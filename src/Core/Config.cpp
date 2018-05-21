@@ -21,7 +21,7 @@ using namespace common;
 using namespace catalyst;
 
 const static UUID CATALYST_NETWORK{{0x11, 0x10, 0x01, 0x11, 0x11, 0x00, 0x01, 0x01, 0x10, 0x11, 0x00, 0x12, 0x10, 0x11,
-    0x01, 0x10}};  // Bender's nightmare
+    0x01, 0x10}};  // Bender's nightmare (You'll need to change this)
 
 Config::Config(common::CommandLine &cmd)
     : is_testnet(cmd.get_bool("--testnet"))
@@ -54,7 +54,7 @@ Config::Config(common::CommandLine &cmd)
 		network_id.data[0] += 1;
 		p2p_bind_port += 1000;
 		p2p_external_port += 1000;
-		bytecoind_bind_port += 1000;
+		catalystd_bind_port += 1000;
 		p2p_allow_local_ip = true;
 	}
 	if (const char *pa = cmd.get("--p2p-bind-address")) {
