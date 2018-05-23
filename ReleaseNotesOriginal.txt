@@ -1,6 +1,3 @@
-Release notes 1.1.2
-
-- Catalyst complete
 
 Release notes 1.1.1
 
