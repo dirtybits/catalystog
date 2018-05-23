@@ -21,7 +21,7 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "Catalyst Developers"
+            VALUE "CompanyName", "Catalyst Project"
             VALUE "FileDescription", "Catalyst"
             VALUE "FileVersion", catalyst_VERSION_STRING
             VALUE "InternalName", "Catalyst"
