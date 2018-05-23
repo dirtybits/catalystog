@@ -54,7 +54,7 @@ class LegacyBlockChainWriter {
 
 public:
 	LegacyBlockChainWriter(const std::string &index_file_name, const std::string &item_file_name, uint64_t count);
-	void write_block(const bytecoin::RawBlock &raw_block);
+	void write_block(const catalyst::RawBlock &raw_block);
 
 	static bool export_blockchain2(const std::string &export_folder, BlockChainState &block_chain);
 };
