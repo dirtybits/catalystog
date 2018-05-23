@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <thread>
@@ -29,16 +30,16 @@ Options:
   -v --version                 Show version.
 )";
 
-using namespace bytecoin;
+using namespace catalyst;
 
 static void fix_merge_mining_tag(BlockTemplate &block) {
 	if (block.major_version >= 2) {
-		bytecoin::TransactionExtraMergeMiningTag mmTag;
+		catalyst::TransactionExtraMergeMiningTag mmTag;
 		mmTag.depth = 0;
 		block.parent_block.base_transaction.extra.clear();
 		mmTag.merkle_root = get_auxiliary_block_header_hash(block);
-		if (!bytecoin::append_merge_mining_tag_to_extra(block.parent_block.base_transaction.extra, mmTag))
-			throw std::runtime_error("bytecoin::append_merge_mining_tag_to_extra failed");
+		if (!catalyst::append_merge_mining_tag_to_extra(block.parent_block.base_transaction.extra, mmTag))
+			throw std::runtime_error("catalyst::append_merge_mining_tag_to_extra failed");
 	}
 }
 
@@ -46,7 +47,7 @@ void test_blockchain(common::CommandLine &cmd) {
 	logging::ConsoleLogger logger;
 	Config config(cmd);
 	config.data_folder = "../tests";
-	bytecoin::BlockChain::DB::delete_db(config.data_folder + "/blockchain");
+	catalyst::BlockChain::DB::delete_db(config.data_folder + "/blockchain");
 	Currency currency(config.is_testnet);
 	BlockChainState block_chain(logger, config, currency);
 	block_chain.test_print_structure();
@@ -62,7 +63,7 @@ void test_blockchain(common::CommandLine &cmd) {
 		BlockTemplate block;
 		Difficulty difficulty = 0;
 		Height height         = 0;
-		if (!block_chain.create_mining_block_template(block, address, bytecoin::BinaryArray{}, difficulty, height))
+		if (!block_chain.create_mining_block_template(block, address, catalyst::BinaryArray{}, difficulty, height))
 			throw std::runtime_error("create_mining_block_template failed");
 		fix_merge_mining_tag(block);
 		block.timestamp = ts + (i + 1) * currency.difficulty_target;
@@ -124,7 +125,7 @@ int main(int argc, const char *argv[]) {
 	std::cout << "Testing Crypto" << std::endl;
 	test_crypto("../tests/crypto/tests.txt");
 	//	test_blockchain(cmd); TODO - make this test runnable again
-	if (cmd.should_quit(USAGE, bytecoin::app_version()))
+	if (cmd.should_quit(USAGE, catalyst::app_version()))
 		return 0;
 	return 0;
 }
