@@ -86,7 +86,7 @@ public:
 	void reset(Unspents &&unspents);
 	void add_mixed_inputs(const SecretKey &view_secret_key,
 	    const std::unordered_map<PublicKey, WalletRecord> &wallet_records, TransactionBuilder &builder,
-	    uint32_t anonymity, api::bytecoind::GetRandomOutputs::Response &&ra_response);
+	    uint32_t anonymity, api::catalystd::GetRandomOutputs::Response &&ra_response);
 
 	bool select_optimal_outputs(Height block_height, Timestamp block_time, Height confirmed_height,
 	    size_t effective_median_size, size_t anonymity, Amount total_amount, size_t total_outputs, Amount fee_per_byte,
