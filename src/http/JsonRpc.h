@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -13,7 +14,7 @@
 #include "seria/JsonOutputStream.hpp"
 #include "types.hpp"
 
-namespace bytecoin {
+namespace catalyst {
 namespace json_rpc {
 
 const int PARSE_ERROR     = -32700;
@@ -38,13 +39,13 @@ public:
 }
 
 namespace seria {
-inline void ser_members(bytecoin::json_rpc::Error &v, ISeria &s) {
+inline void ser_members(catalyst::json_rpc::Error &v, ISeria &s) {
 	seria_kv("code", v.code, s);
 	seria_kv("message", v.message, s);
 }
 }
 
-namespace bytecoin {
+namespace catalyst {
 namespace json_rpc {
 
 typedef boost::optional<common::JsonValue> OptionalJsonValue;
