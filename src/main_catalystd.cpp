@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <boost/algorithm/string.hpp>
@@ -12,32 +13,32 @@
 #include "platform/PathTools.hpp"
 #include "version.hpp"
 
-using namespace bytecoin;
+using namespace catalyst;
 
 static const char USAGE[] =
-    R"(bytecoind )" bytecoin_VERSION_STRING R"(.
+    R"(catalystd )" bytecoin_VERSION_STRING R"(.
 Usage:
-  bytecoind [options]
-  bytecoind --help | -h
-  bytecoind --version | -v
+  catalystd [options]
+  catalystd --help | -h
+  catalystd --version | -v
 Options:
   --export-blocks=<directory>          Export blockchain into specified directory as blocks.bin and blockindexes.bin, then exit. This overwrites existing files.
   --allow-local-ip                     Allow local ip add to peer list, mostly in debug purposes.
   --testnet                            Configure for testnet.
   --p2p-bind-address=<ip:port>         Interface and port for P2P network protocol [default: 0.0.0.0:8080].
   --p2p-external-port=<port>           External port for P2P network protocol, if port forwarding used with NAT [default: 8080].
-  --bytecoind-bind-address=<ip:port>   Interface and port for bytecoind RPC [default: 127.0.0.1:8081].
+  --catalystd-bind-address=<ip:port>   Interface and port for catalystd RPC [default: 127.0.0.1:8081].
   --seed-node-address=<ip:port>        Specify list (one or more) of nodes to start connecting to.
   --priority-node-address=<ip:port>    Specify list (one or more) of nodes to connect to and attempt to keep the connection open.
   --exclusive-node-address=<ip:port>   Specify list (one or more) of nodes to connect to only. All other nodes including seed nodes will be ignored.
   --data-folder=<full-path>            Folder for blockchain, logs and peer DB [default: )" platform_DEFAULT_DATA_FOLDER_PATH_PREFIX
-    R"(bytecoin].
+    R"(catalyst].
 )"
 #if platform_USE_SSL
     R"(  --ssl-certificate-pem-file=<file>    Full path to file containing both server SSL certificate and private key in PEM format.
   --ssl-certificate-password=<pass>    DEPRECATED. Will read password from stdin if not specified.)"
 #endif
-    R"(  --bytecoind-authorization=<usr:pass> HTTP authorization for RPC.)";
+    R"(  --catalystd-authorization=<usr:pass> HTTP authorization for RPC.)";
 
 int main(int argc, const char *argv[]) try {
 	common::console::UnicodeConsoleSetup console_setup;
@@ -47,10 +48,10 @@ int main(int argc, const char *argv[]) try {
 	std::string export_blocks;
 	if (const char *pa = cmd.get("--export-blocks"))
 		export_blocks = pa;
-	bytecoin::Config config(cmd);
-	bytecoin::Currency currency(config.is_testnet);
+	catalyst::Config config(cmd);
+	catalyst::Currency currency(config.is_testnet);
 
-	if (cmd.should_quit(USAGE, bytecoin::app_version()))
+	if (cmd.should_quit(USAGE, catalyst::app_version()))
 		return 0;
 
 	if (!config.ssl_certificate_pem_file.empty() && !config.ssl_certificate_password) {
@@ -64,10 +65,10 @@ int main(int argc, const char *argv[]) try {
 
 	const std::string coinFolder = config.get_data_folder();
 
-	platform::ExclusiveLock coin_lock(coinFolder, "bytecoind.lock");
+	platform::ExclusiveLock coin_lock(coinFolder, "catalystd.lock");
 
 	logging::LoggerManager logManager;
-	logManager.configure_default(config.get_data_folder("logs"), "bytecoind-");
+	logManager.configure_default(config.get_data_folder("logs"), "catalystd-");
 
 	BlockChainState block_chain(logManager, config, currency);
 //	block_chain.test_undo_everything();
@@ -85,7 +86,7 @@ int main(int argc, const char *argv[]) try {
 
 	auto idea_ms =
 	    std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - idea_start);
-	std::cout << "bytecoind started seconds=" << double(idea_ms.count()) / 1000 << std::endl;
+	std::cout << "catalystd started seconds=" << double(idea_ms.count()) / 1000 << std::endl;
 	while (!io.stopped()) {
 		if (node.on_idle())  // Using it to load blockchain
 			io.poll();
@@ -94,8 +95,8 @@ int main(int argc, const char *argv[]) try {
 	}
 	return 0;
 } catch (const platform::ExclusiveLock::FailedToLock &ex) {
-	std::cout << "Bytecoind already running - " << ex.what() << std::endl;
-	return api::BYTECOIND_ALREADY_RUNNING;
+	std::cout << "Catalystd already running - " << ex.what() << std::endl;
+	return api::CATALYSTD_ALREADY_RUNNING;
 } catch (const std::exception &ex) {  // On Windows what() is not printed if thrown from main
 	std::cout << "Exception in main() - " << ex.what() << std::endl;
 	throw;
