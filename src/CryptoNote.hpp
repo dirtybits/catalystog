@@ -13,7 +13,7 @@
 // We define here, as CryptoNoteConfig.h is never included anywhere anymore
 #define catalyst_ALLOW_DEBUG_COMMANDS 1
 
-namespace catalsyt {
+namespace catalyst {
 
 using crypto::Hash;
 using crypto::PublicKey;
