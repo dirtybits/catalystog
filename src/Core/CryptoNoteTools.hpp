@@ -52,5 +52,5 @@ inline ParentBlockSerializer make_parent_block_serializer(
 
 namespace seria {
 class ISeria;
-void ser_members(bytecoin::ParentBlockSerializer &v, ISeria &s);
+void ser_members(catalyst::ParentBlockSerializer &v, ISeria &s);
 }
