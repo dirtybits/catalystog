@@ -1,4 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
+// Copyright (c) 2018, The Catalyst project.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -22,8 +23,8 @@
 // std::string, Hash, PublicKey, SecretKey, KeyImage, BinaryArray - String (hex)
 // std::vector - Array
 // std::map, struct - Object
-// bytecoin does not use Null, you should specify empty Array as [], empty string as "", empty Object as {}
-namespace bytecoin {
+// catalyst does not use Null, you should specify empty Array as [], empty string as "", empty Object as {}
+namespace catalyst {
 namespace api {
 
 struct EmptyStruct {};  // Used as a typedef for empty requests, which we have a lot
@@ -129,14 +130,14 @@ struct Balance {
 }
 
 // These messages encoded in JSON can be sent via http to walletd rpc address:port
-namespace bytecoin {
+namespace catalyst {
 namespace api {
 
 enum return_code {
-	BYTECOIND_DATABASE_ERROR    = 101,  // We hope we are out of disk space, otherwise blockchain DB is corrupted.
-	BYTECOIND_ALREADY_RUNNING   = 102,
+	CATALYSTD_DATABASE_ERROR    = 101,  // We hope we are out of disk space, otherwise blockchain DB is corrupted.
+	CATALYSTD_ALREADY_RUNNING   = 102,
 	WALLETD_BIND_PORT_IN_USE    = 103,
-	BYTECOIND_BIND_PORT_IN_USE  = 104,
+	CATALYSTD_BIND_PORT_IN_USE  = 104,
 	WALLET_FILE_READ_ERROR      = 205,
 	WALLET_FILE_UNKNOWN_VERSION = 206,
 	WALLET_FILE_DECRYPT_ERROR   = 207,
@@ -357,11 +358,11 @@ struct GetTransaction {
 }
 }
 
-// These messages encoded in JSON can be sent via http url /json_rpc3 to bytecoind rpc address:port
+// These messages encoded in JSON can be sent via http url /json_rpc3 to catalystd rpc address:port
 // or to binMethod() url encoded in unspecified binary format
-namespace bytecoin {
+namespace catalyst {
 namespace api {
-namespace bytecoind {
+namespace catalystd {
 
 inline std::string url() { return "/json_rpc"; }
 
@@ -376,7 +377,7 @@ struct GetStatus {
 };
 
 // Signature of this method will stabilize to the end of beta
-struct SyncBlocks {  // Used by walletd, block explorer, etc to sync to bytecoind
+struct SyncBlocks {  // Used by walletd, block explorer, etc to sync to catalystd
 	static std::string method() { return "sync_blocks"; }
 	static std::string bin_method() { return "/sync_blocks.bin"; }
 
@@ -388,9 +389,9 @@ struct SyncBlocks {  // Used by walletd, block explorer, etc to sync to bytecoin
 	};
 	struct SyncBlock {  // Signatures are checked by bytecoind so usually they are of no interest
 		api::BlockHeader header;
-		bytecoin::BlockTemplate bc_header;
+		catalyst::BlockTemplate bc_header;
 		// the only method returning actual BlockHeader from blockchain, not api::BlockHeader
-		std::vector<bytecoin::TransactionPrefix> bc_transactions;
+		std::vector<catalyst::TransactionPrefix> bc_transactions;
 		// the only method returning actual Transaction from blockchain, not api::Transaction
 		Hash base_transaction_hash;                         // BlockTemplate does not contain it
 		std::vector<std::vector<uint32_t>> global_indices;  // for each transaction
@@ -411,7 +412,7 @@ struct SyncMemPool {  // Used by walletd sync process
 	};
 	struct Response {
 		std::vector<Hash> removed_hashes;                                // Hashes no more in pool
-		std::vector<bytecoin::TransactionPrefix> added_bc_transactions;  // New raw transactions in pool
+		std::vector<catalyst::TransactionPrefix> added_bc_transactions;  // New raw transactions in pool
 		std::vector<api::Transaction> added_transactions;
 		// binary version of this method returns only hash and timestamp here
 		GetStatus::Response status;  // We save roundtrip during sync by also sending status here
@@ -531,52 +532,52 @@ namespace seria {
 
 class ISeria;
 
-void ser_members(bytecoin::api::EmptyStruct &v, ISeria &s);
-void ser_members(bytecoin::api::Output &v, ISeria &s);
-void ser_members(bytecoin::api::BlockHeader &v, ISeria &s);
-void ser_members(bytecoin::api::Transfer &v, ISeria &s);
-void ser_members(bytecoin::api::Transaction &v, ISeria &s);
-void ser_members(bytecoin::api::Block &v, ISeria &s);
-void ser_members(bytecoin::api::Balance &v, ISeria &s);
+void ser_members(catalyst::api::EmptyStruct &v, ISeria &s);
+void ser_members(catalyst::api::Output &v, ISeria &s);
+void ser_members(catalyst::api::BlockHeader &v, ISeria &s);
+void ser_members(catalyst::api::Transfer &v, ISeria &s);
+void ser_members(catalyst::api::Transaction &v, ISeria &s);
+void ser_members(catalyst::api::Block &v, ISeria &s);
+void ser_members(catalyst::api::Balance &v, ISeria &s);
 
-void ser_members(bytecoin::api::walletd::GetAddresses::Response &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::GetViewKeyPair::Response &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::CreateAddresses::Request &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::CreateAddresses::Response &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::GetBalance::Request &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::GetBalance::Response &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::GetUnspents::Request &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::GetUnspents::Response &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::GetTransfers::Request &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::GetTransfers::Response &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::CreateTransaction::Request &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::CreateTransaction::Response &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::CreateSendProof::Request &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::CreateSendProof::Response &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::GetTransaction::Request &v, ISeria &s);
-void ser_members(bytecoin::api::walletd::GetTransaction::Response &v, ISeria &s);
+void ser_members(catalyst::api::walletd::GetAddresses::Response &v, ISeria &s);
+void ser_members(catalyst::api::walletd::GetViewKeyPair::Response &v, ISeria &s);
+void ser_members(catalyst::api::walletd::CreateAddresses::Request &v, ISeria &s);
+void ser_members(catalyst::api::walletd::CreateAddresses::Response &v, ISeria &s);
+void ser_members(catalyst::api::walletd::GetBalance::Request &v, ISeria &s);
+void ser_members(catalyst::api::walletd::GetBalance::Response &v, ISeria &s);
+void ser_members(catalyst::api::walletd::GetUnspents::Request &v, ISeria &s);
+void ser_members(catalyst::api::walletd::GetUnspents::Response &v, ISeria &s);
+void ser_members(catalyst::api::walletd::GetTransfers::Request &v, ISeria &s);
+void ser_members(catalyst::api::walletd::GetTransfers::Response &v, ISeria &s);
+void ser_members(catalyst::api::walletd::CreateTransaction::Request &v, ISeria &s);
+void ser_members(catalyst::api::walletd::CreateTransaction::Response &v, ISeria &s);
+void ser_members(catalyst::api::walletd::CreateSendProof::Request &v, ISeria &s);
+void ser_members(catalyst::api::walletd::CreateSendProof::Response &v, ISeria &s);
+void ser_members(catalyst::api::walletd::GetTransaction::Request &v, ISeria &s);
+void ser_members(catalyst::api::walletd::GetTransaction::Response &v, ISeria &s);
 
-void ser_members(bytecoin::api::bytecoind::GetStatus::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetStatus::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SyncBlocks::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SyncBlocks::SyncBlock &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SyncBlocks::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SyncMemPool::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SyncMemPool::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetRandomOutputs::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetRandomOutputs::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SendTransaction::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SendTransaction::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::CheckSendProof::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::CheckSendProof::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetBlockTemplate::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetBlockTemplate::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetCurrencyId::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SubmitBlock::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::SubmitBlock::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::BlockHeaderLegacy &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetLastBlockHeaderLegacy::Response &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetBlockHeaderByHashLegacy::Request &v, ISeria &s);
-void ser_members(bytecoin::api::bytecoind::GetBlockHeaderByHeightLegacy::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::GetStatus::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::GetStatus::Response &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::SyncBlocks::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::SyncBlocks::SyncBlock &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::SyncBlocks::Response &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::SyncMemPool::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::SyncMemPool::Response &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::GetRandomOutputs::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::GetRandomOutputs::Response &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::SendTransaction::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::SendTransaction::Response &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::CheckSendProof::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::CheckSendProof::Response &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::GetBlockTemplate::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::GetBlockTemplate::Response &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::GetCurrencyId::Response &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::SubmitBlock::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::SubmitBlock::Response &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::BlockHeaderLegacy &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::GetLastBlockHeaderLegacy::Response &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::GetBlockHeaderByHashLegacy::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::GetBlockHeaderByHeightLegacy::Request &v, ISeria &s);
 
 }  // namespace seria
