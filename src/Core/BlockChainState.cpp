@@ -629,7 +629,7 @@ BroadcastAction BlockChainState::add_transaction(const Hash &tid, const Transact
 		if (tit == m_memory_state_ki_tx.end())
 			continue;
 		const Transaction &other_tx     = m_memory_state_tx.at(tit->second);
-		const Amount other_fee          = bytecoin::get_tx_fee(other_tx);  // TODO - optimize get fee
+		const Amount other_fee          = catalyst::get_tx_fee(other_tx);  // TODO - optimize get fee
 		const size_t other_size         = seria::binary_size(other_tx);
 		const Amount other_fee_per_byte = other_fee / other_size;
 		if (my_fee_per_byte < other_fee_per_byte)
@@ -681,7 +681,7 @@ void BlockChainState::remove_from_pool(Hash tid) {
 				all_erased = false;
 		}
 	}
-	const Amount my_fee          = bytecoin::get_tx_fee(tx);  // TODO - optimize get fee
+	const Amount my_fee          = catalyst::get_tx_fee(tx);  // TODO - optimize get fee
 	const size_t my_size         = seria::binary_size(tx);
 	const Amount my_fee_per_byte = my_fee / my_size;
 	if (m_memory_state_fee_tx[my_fee_per_byte].erase(tid) != 1)
