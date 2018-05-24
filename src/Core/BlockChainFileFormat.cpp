@@ -216,8 +216,8 @@ LegacyBlockChainWriter::LegacyBlockChainWriter(const std::string &index_file_nam
 	m_indexes_file.write(&count, sizeof(count));
 }
 
-void LegacyBlockChainWriter::write_block(const bytecoin::RawBlock &raw_block) {
-	bytecoin::BinaryArray ba = seria::to_binary(raw_block);
+void LegacyBlockChainWriter::write_block(const catalyst::RawBlock &raw_block) {
+	catalyst::BinaryArray ba = seria::to_binary(raw_block);
 	m_items_file.write(ba.data(), ba.size());
 	uint32_t si = static_cast<uint32_t>(ba.size());
 	m_indexes_file.write(&si, sizeof si);
