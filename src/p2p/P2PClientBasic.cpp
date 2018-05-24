@@ -242,7 +242,7 @@ void P2PClientBasic::on_request_ready() {
 				}
 				continue;
 			}
-			std::cout << "generic bytecoin::P2P cmd={" << cmd.command << "} " << cmd.is_response << " " << cmd.is_notify
+			std::cout << "generic catalyst::P2P cmd={" << cmd.command << "} " << cmd.is_response << " " << cmd.is_notify
 			          << " {"
 			          << "}" << std::endl;
 		} catch (const std::exception &ex) {
