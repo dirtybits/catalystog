@@ -118,7 +118,7 @@ std::string read_cipher(common::IInputStream &source, const std::string &name) {
 	return cipher;
 }
 
-std::string decrypt(const std::string &cipher, bytecoin::WalletSerializerV1::CryptoContext &crypto_ctx) {
+std::string decrypt(const std::string &cipher, catalyst::WalletSerializerV1::CryptoContext &crypto_ctx) {
 	std::string plain;
 	plain.resize(cipher.size());
 
@@ -135,7 +135,7 @@ void deserialize(Object &obj, const std::string &name, const std::string &plain)
 
 template<typename Object>
 void deserialize_encrypted(Object &obj, const std::string &name,
-    bytecoin::WalletSerializerV1::CryptoContext &crypto_ctx, common::IInputStream &source) {
+    catalyst::WalletSerializerV1::CryptoContext &crypto_ctx, common::IInputStream &source) {
 	std::string cipher = read_cipher(source, name);
 	std::string plain  = decrypt(cipher, crypto_ctx);
 
