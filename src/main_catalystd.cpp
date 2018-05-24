@@ -16,7 +16,7 @@
 using namespace catalyst;
 
 static const char USAGE[] =
-    R"(catalystd )" bytecoin_VERSION_STRING R"(.
+    R"(catalystd )" catalyst_VERSION_STRING R"(.
 Usage:
   catalystd [options]
   catalystd --help | -h

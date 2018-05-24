@@ -15,10 +15,10 @@
 #include "platform/PathTools.hpp"
 #include "version.hpp"
 
-using namespace bytecoin;
+using namespace catalyst;
 
 static const char USAGE[] =
-    R"(walletd )" bytecoin_VERSION_STRING R"(.
+    R"(walletd )" catalyst_VERSION_STRING R"(.
 Usage:
   walletd [options] --wallet-file=<file> | --export-blocks=<directory>
   walletd --help | -h
@@ -34,19 +34,19 @@ Options:
   --testnet                            Configure for testnet.
   --walletd-bind-address=<ip:port>     Interface and port for walletd RPC [default: 127.0.0.1:8070].
   --data-folder=<full-path>            Folder for wallet cache, blockchain, logs and peer DB [default: )" platform_DEFAULT_DATA_FOLDER_PATH_PREFIX
-    R"(bytecoin].
-  --bytecoind-remote-address=<ip:port> Connect to remote bytecoind and suppress running built-in bytecoind.
-  --bytecoind-authorization=<usr:pass> HTTP authorization for RCP.
-Options for built-in bytecoind (run when no --bytecoind-remote-address specified):
+    R"(catalyst].
+  --catalystd-remote-address=<ip:port> Connect to remote catalystd and suppress running built-in catalystd.
+  --catalystd-authorization=<usr:pass> HTTP authorization for RCP.
+Options for built-in catalystd (run when no --catalystd-remote-address specified):
   --allow-local-ip                     Allow local ip add to peer list, mostly in debug purposes.
   --p2p-bind-address=<ip:port>         Interface and port for P2P network protocol [default: 0.0.0.0:8080].
   --p2p-external-port=<port>           External port for P2P network protocol, if port forwarding used with NAT [default: 8080].
-  --bytecoind-bind-address=<ip:port>   Interface and port for bytecoind RPC [default: 127.0.0.1:8081].
+  --catalystd-bind-address=<ip:port>   Interface and port for catalystd RPC [default: 127.0.0.1:8081].
   --seed-node-address=<ip:port>        Specify list (one or more) of nodes to start connecting to.
   --priority-node-address=<ip:port>    Specify list (one or more) of nodes to connect to and attempt to keep the connection open.
   --exclusive-node-address=<ip:port>   Specify list (one or more) of nodes to connect to only. All other nodes including seed nodes will be ignored.)";
 
-static const bool separate_thread_for_bytecoind = true;
+static const bool separate_thread_for_catalystd = true;
 
 int main(int argc, const char *argv[]) try {
 	common::console::UnicodeConsoleSetup console_setup;
@@ -72,13 +72,13 @@ int main(int argc, const char *argv[]) try {
 		return api::WALLETD_WRONG_ARGS;
 	}
 
-	bytecoin::Config config(cmd);
-	bytecoin::Currency currency(config.is_testnet);
+	catalyst::Config config(cmd);
+	catalyst::Currency currency(config.is_testnet);
 
-	if (cmd.should_quit(USAGE, bytecoin::app_version()))
+	if (cmd.should_quit(USAGE, catalyst::app_version()))
 		return api::WALLETD_WRONG_ARGS;
 	logging::LoggerManager logManagerNode;
-	logManagerNode.configure_default(config.get_data_folder("logs"), "bytecoind-");
+	logManagerNode.configure_default(config.get_data_folder("logs"), "catalystd-");
 
 	if (wallet_file.empty()) {
 		std::cout << "--wallet-file=<file> argument is mandatory" << std::endl;
@@ -159,11 +159,11 @@ int main(int argc, const char *argv[]) try {
 	}
 	std::unique_ptr<platform::ExclusiveLock> blockchain_lock;
 	try {
-		if (!config.bytecoind_remote_port)
-			blockchain_lock = std::make_unique<platform::ExclusiveLock>(coinFolder, "bytecoind.lock");
+		if (!config.catalystd_remote_port)
+			blockchain_lock = std::make_unique<platform::ExclusiveLock>(coinFolder, "catalystd.lock");
 	} catch (const platform::ExclusiveLock::FailedToLock &ex) {
-		std::cout << "Bytecoind already running - " << ex.what() << std::endl;
-		return api::BYTECOIND_ALREADY_RUNNING;
+		std::cout << "Catalystd already running - " << ex.what() << std::endl;
+		return api::CATALYSTD_ALREADY_RUNNING;
 	}
 	try {
 		walletcache_lock = std::make_unique<platform::ExclusiveLock>(
@@ -206,11 +206,11 @@ int main(int argc, const char *argv[]) try {
 	std::unique_ptr<Node> node;
 
 	std::promise<void> prm;
-	std::thread bytecoind_thread;
-	if (!config.bytecoind_remote_port) {
+	std::thread catalystd_thread;
+	if (!config.catalystd_remote_port) {
 		try {
-			if (separate_thread_for_bytecoind) {
-				bytecoind_thread = std::thread([&prm, &logManagerNode, &config, &currency] {
+			if (separate_thread_for_catalystd) {
+				catalystd_thread = std::thread([&prm, &logManagerNode, &config, &currency] {
 					boost::asio::io_service io;
 					platform::EventLoop separate_run_loop(io);
 
@@ -239,9 +239,9 @@ int main(int argc, const char *argv[]) try {
 			}
 		} catch (const boost::system::system_error &ex) {
 			std::cout << ex.what() << std::endl;
-			if (bytecoind_thread.joinable())
-				bytecoind_thread.join();  // otherwise terminate will be called in ~thread
-			return api::BYTECOIND_BIND_PORT_IN_USE;
+			if (catalystd_thread.joinable())
+				catalystd_thread.join();  // otherwise terminate will be called in ~thread
+			return api::CATALYSTD_BIND_PORT_IN_USE;
 		}
 	}
 
