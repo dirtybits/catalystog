@@ -111,7 +111,7 @@ struct KeysStorage {
 
 std::string read_cipher(common::IInputStream &source, const std::string &name) {
 	std::string cipher;
-	//	bytecoin::BinaryInputStreamSerializer s(source);
+	//	catalyst::BinaryInputStreamSerializer s(source);
 	seria::BinaryInputStream s(source);
 	s(cipher);  // , name
 
