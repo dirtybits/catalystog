@@ -159,7 +159,7 @@ bool LegacyBlockChainReader::import_blocks(BlockChainState &block_chain) {
 }
 
 bool LegacyBlockChainReader::import_blockchain2(const std::string &coin_folder, BlockChainState &block_chain) {
-	//	std::fstream ts_file("/Users/user/bytecoin/timestamps.txt",
+	//	std::fstream ts_file("/Users/user/catalyst/timestamps.txt",
 	// std::ios::out | std::ios::trunc);
 	//	ts_file << "Block timestamp\tBlock median_timestamp\tBlock
 	// unlockTimestamp\tTimestamp difference\tMedian timestamp "
