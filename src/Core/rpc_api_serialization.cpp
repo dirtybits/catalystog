@@ -449,7 +449,7 @@ void ser_members(catalyst::api::catalystd::CheckSendProof::Request &v, ISeria &s
 void ser_members(catalyst::api::catalystd::CheckSendProof::Response &v, ISeria &s) {
 	seria_kv("validation_error", v.validation_error, s);
 }
-/*void ser_members(bytecoin::api::walletd::GetBlock::Request &v, ISeria &s) {
+/*void ser_members(catalyst::api::walletd::GetBlock::Request &v, ISeria &s) {
         seria_kv("hash", v.hash, s);
         seria_kv("height", v.height, s);
 }*/
