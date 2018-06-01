@@ -11,7 +11,7 @@ option(USE_INSTRUMENTATION "For testing - builds with address sanitizer instrume
 option(WITH_THREAD_SANITIZER "For testing - builds with thread sanitizer instrument, USE_INSTRUMENTATION must be also set" OFF)
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     option(USE_SQLITE "Builds with SQLite instead of LMDB. 4x slower, but works on 32-bit and mobile platforms" OFF)
-    option(USE_SSL "Builds with support of https between walletd and bcatalyst" ON)
+    option(USE_SSL "Builds with support of https between walletd and catalyst" ON)
 else()
     option(USE_SQLITE "Builds with sqlite instead of LMDB. 4x slower, but works on 32-bit and mobile platforms" ON)
     option(USE_SSL "Builds with support of https between walletd and catalystd" OFF)

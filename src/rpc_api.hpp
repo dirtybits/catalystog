@@ -15,7 +15,7 @@
 // Common data structures used in all api calls.
 // Basic data types are serialized to Json as follows
 // bool - Bool
-// Amount, SignedAmount, Height, Timestamp, UnlockMoment, Difficulty, (u)int - Number. bytecoin does not use fractional
+// Amount, SignedAmount, Height, Timestamp, UnlockMoment, Difficulty, (u)int - Number. catalyst does not use fractional
 // numbers, but uses numbers as large as 2^64-1 for amounts, which is larger than 2^53 exactly representable in double
 // or JavaScript Number
 //     amounts large than ~91 million BCN cannot be represented exactly in JavaScript and other platforms using IEEE
@@ -167,7 +167,7 @@ struct GetStatus {
 		// You get longpoll (no immediate reply) until any parameter changes.
 		// You can just send previous response as a next request if you are interested in all changes visible to API.
 		std::string
-		    lower_level_error;  // Problems on lower levels (like bytecoind errors in walletd status). Empty - no errors
+		    lower_level_error;  // Problems on lower levels (like catalystd errors in walletd status). Empty - no errors
 
 		bool operator==(const Request &other) const {
 			return lower_level_error == other.lower_level_error && top_block_hash == other.top_block_hash &&
@@ -387,7 +387,7 @@ struct SyncBlocks {  // Used by walletd, block explorer, etc to sync to catalyst
 		Timestamp first_block_timestamp = 0;
 		uint32_t max_count              = MAX_COUNT / 10;
 	};
-	struct SyncBlock {  // Signatures are checked by bytecoind so usually they are of no interest
+	struct SyncBlock {  // Signatures are checked by catalystd so usually they are of no interest
 		api::BlockHeader header;
 		catalyst::BlockTemplate bc_header;
 		// the only method returning actual BlockHeader from blockchain, not api::BlockHeader

@@ -84,7 +84,7 @@ struct COMMAND_PING {
 	};
 };
 
-#if bytecoin_ALLOW_DEBUG_COMMANDS
+#if catalyst_ALLOW_DEBUG_COMMANDS
 // These commands are considered as insecure, and made in debug purposes for a limited lifetime.
 // Anyone who feel unsafe with this commands can disable the ALLOW_GET_STAT_COMMAND macro.
 
@@ -160,7 +160,7 @@ void ser_members(catalyst::COMMAND_TIMED_SYNC::request &v, seria::ISeria &s);
 void ser_members(catalyst::COMMAND_TIMED_SYNC::response &v, seria::ISeria &s);
 void ser_members(catalyst::COMMAND_PING::request &v, seria::ISeria &s);
 void ser_members(catalyst::COMMAND_PING::response &v, seria::ISeria &s);
-#if bytecoin_ALLOW_DEBUG_COMMANDS
+#if catalyst_ALLOW_DEBUG_COMMANDS
 void ser_members(catalyst::proof_of_trust &v, seria::ISeria &s);
 void ser_members(catalyst::COMMAND_REQUEST_STAT_INFO::request &v, seria::ISeria &s);
 void ser_members(catalyst::COMMAND_REQUEST_STAT_INFO::response &v, seria::ISeria &s);

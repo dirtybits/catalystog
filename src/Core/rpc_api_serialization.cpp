@@ -449,7 +449,7 @@ void ser_members(catalyst::api::catalystd::CheckSendProof::Request &v, ISeria &s
 void ser_members(catalyst::api::catalystd::CheckSendProof::Response &v, ISeria &s) {
 	seria_kv("validation_error", v.validation_error, s);
 }
-/*void ser_members(bytecoin::api::walletd::GetBlock::Request &v, ISeria &s) {
+/*void ser_members(catalyst::api::walletd::GetBlock::Request &v, ISeria &s) {
         seria_kv("hash", v.hash, s);
         seria_kv("height", v.height, s);
 }*/
@@ -476,8 +476,8 @@ void ser_members(catalyst::api::catalystd::GetBlockTemplate::Response &v, ISeria
 void ser_members(catalyst::api::catalystd::GetCurrencyId::Response &v, ISeria &s) {
 	seria_kv("currency_id_blob", v.currency_id_blob, s);
 }
-void ser_members(catalyst::api::bcatalyst::SubmitBlock::Response &v, ISeria &s) { seria_kv("status", v.status, s); }
-void ser_members(catalyst::api::bcatalyst::SubmitBlock::Request &v, ISeria &s) {
+void ser_members(catalyst::api::catalyst::SubmitBlock::Response &v, ISeria &s) { seria_kv("status", v.status, s); }
+void ser_members(catalyst::api::catalyst::SubmitBlock::Request &v, ISeria &s) {
 	seria_kv("blocktemplate_blob", v.blocktemplate_blob, s);
 }
 void ser_members(catalyst::api::catalystd::BlockHeaderLegacy &v, ISeria &s) {
