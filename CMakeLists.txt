@@ -140,7 +140,7 @@ else()
     add_executable(walletd src/main_walletd.cpp)
     add_executable(catalystd src/main_catalystd.cpp)
 endif()
-add_executable(tests src/main_tests.cpp tests/io.hpp tests/crypto/test_crypto.cpp tests/hash/test_hash.cpp tests/json/test_json.cpp)
+add_executable(tests src/main_tests.cpp tests/io.hpp tests/crypto/test_crypto.cpp tests/hash/test_hash.cpp tests/wallet_file/test_wallet_file.cpp tests/json/test_json.cpp)
 set(Boost_USE_STATIC_LIBS ON)
 add_definitions(-DBOOST_BIND_NO_PLACEHOLDERS=1 -DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE=1) # boost::_1 conflicts with std::_1
 target_link_libraries(walletd catalyst-crypto catalyst-core)
