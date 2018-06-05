@@ -476,8 +476,8 @@ void ser_members(catalyst::api::catalystd::GetBlockTemplate::Response &v, ISeria
 void ser_members(catalyst::api::catalystd::GetCurrencyId::Response &v, ISeria &s) {
 	seria_kv("currency_id_blob", v.currency_id_blob, s);
 }
-void ser_members(catalyst::api::catalyst::SubmitBlock::Response &v, ISeria &s) { seria_kv("status", v.status, s); }
-void ser_members(catalyst::api::catalyst::SubmitBlock::Request &v, ISeria &s) {
+void ser_members(catalyst::api::catalystd::SubmitBlock::Response &v, ISeria &s) { seria_kv("status", v.status, s); }
+void ser_members(catalyst::api::catalystd::SubmitBlock::Request &v, ISeria &s) {
 	seria_kv("blocktemplate_blob", v.blocktemplate_blob, s);
 }
 void ser_members(catalyst::api::catalystd::BlockHeaderLegacy &v, ISeria &s) {
