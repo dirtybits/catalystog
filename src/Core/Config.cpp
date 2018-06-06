@@ -12,7 +12,7 @@
 
 static void parse_peer_and_add_to_container(const std::string &str, std::vector<catalyst::NetworkAddress> &container) {
 	catalyst::NetworkAddress na{};
-	if (!common::parse_ip_address_and_port(str, na.ip, na.port))
+	if (!common::parse_ip_address_and_port(str, &na.ip, &na.port))
 		throw std::runtime_error("Wrong address format " + str + ", should be ip:port");
 	container.push_back(na);
 }
