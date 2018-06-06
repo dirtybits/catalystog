@@ -111,7 +111,7 @@ void Node::getblocktemplate(const api::catalystd::GetBlockTemplate::Request &req
 	AccountPublicAddress acc{};
 
 	if (req.wallet_address.empty() ||
-	    !m_block_chain.get_currency().parse_account_address_string(req.wallet_address, acc)) {
+	    !m_block_chain.get_currency().parse_account_address_string(req.wallet_address, &acc)) {
 		throw json_rpc::Error{CORE_RPC_ERROR_CODE_WRONG_WALLET_ADDRESS, "Failed to parse wallet address"};
 	}
 
