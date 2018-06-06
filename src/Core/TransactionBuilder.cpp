@@ -241,13 +241,13 @@ std::string UnspentSelector::select_optimal_outputs(Height block_height, Timesta
 	    (optimization_level == "aggressive") ? MEDIAN_PERCENT_AGGRESSIVE : MEDIAN_PERCENT;
 	const size_t optimization_median = effective_median_size * optimization_median_percent / 100;
 	while (true) {
-		if (!select_optimal_outputs(have_coins, dust_coins, max_digits, total_amount + fee, anonymity, optimizations))
+		if (!select_optimal_outputs(&have_coins, &dust_coins, max_digits, total_amount + fee, anonymity, optimizations))
 			return false;
 		Amount change_dust_fee = (m_used_total - total_amount - fee) % m_currency.default_dust_threshold;
 		size_t tx_size         = get_maximum_tx_size(m_inputs_count, total_outputs + 8,
 		    anonymity);  // TODO - 8 is expected max change outputs
 		if (tx_size > optimization_median && optimizations > 0) {
-			unoptimize_amounts(have_coins, dust_coins);
+			unoptimize_amounts(&have_coins, &dust_coins);
 			optimizations /= 2;
 			if (optimizations < 10)
 				optimizations = 0;  // no point trying so many times for so few optimizations
@@ -485,7 +485,7 @@ bool UnspentSelector::select_optimal_outputs(HaveCoins *have_coins, DustCoins *d
 	// Use largest coins (including dust if anonymity == 0) until amount satisfied
 	unoptimize_amounts(have_coins, dust_coins);
 	while (m_used_total < total_amount) {
-		if (have_coins->empty() && (anonymity != 0 || dust_coins.empty()))
+		if (have_coins->empty() && (anonymity != 0 || dust_coins->empty()))
 			return false;
 		Amount ha_amount = 0;
 		Amount du_amount = 0;
