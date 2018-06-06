@@ -9,7 +9,7 @@ Building on Linux 64-bit.
 All commands below are adapted for Ubuntu, other distributions may need another command set.
 
 Building with standard options
-Create directory bcndev somewhere and go there:
+Create directory cstdev somewhere and go there:
 ```
 $> mkdir cstdev
 $> cd cstdev
