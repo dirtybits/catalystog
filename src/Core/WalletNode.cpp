@@ -218,6 +218,7 @@ void WalletNode::check_address_in_wallet_or_throw(const std::string & addr)const
 	if(m_wallet_state.get_wallet().get_view_public_key() != address.view_public_key || sk == m_wallet_state.get_wallet().get_records().end())
 		throw json_rpc::Error(json_rpc::INVALID_PARAMS, "Cannot get balance for address not in a wallet, address " + addr);
 }
+
 bool WalletNode::handle_get_balance3(http::Client *, http::RequestData &&, json_rpc::Request &&,
     api::walletd::GetBalance::Request &&request, api::walletd::GetBalance::Response &response) {
 	check_address_in_wallet_or_throw(request.address);
