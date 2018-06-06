@@ -27,7 +27,7 @@ static const std::string UNLOCK_TIME_PREFIX  = "U";
 
 const size_t MAX_POOL_SIZE = 2000000;  // ~1000 "normal" transactions with 10 inputs and 10 outputs
 
-using namespace bytecoin;
+using namespace catalyst;
 using namespace platform;
 
 BlockChainState::PoolTransaction::PoolTransaction(const Transaction &tx, const BinaryArray &binary_tx, Amount fee)
