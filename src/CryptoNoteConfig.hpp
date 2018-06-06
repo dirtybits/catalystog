@@ -80,7 +80,7 @@ const char CRYPTONOTE_BLOCKINDEXES_FILENAME[] = "blockindexes.bin";
 }  // parameters
 
 const char CRYPTONOTE_NAME[]                  = "catalyst";
-const char GENESIS_COINBASE_TX_HEX[]          = ""; // Let's see how this works out...
+const char GENESIS_COINBASE_TX_HEX[]          = ""; // Need to generate this, spoofing it may be the solution
 
 const uint8_t CURRENT_TRANSACTION_VERSION     = 1;
 
