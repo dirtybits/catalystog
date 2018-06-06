@@ -1,5 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
-// Copyright (c) 2018 The Catalyst project.
+// Copyright (c) 2018 The Catalyst developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "Server.hpp"
@@ -139,11 +139,10 @@ void Server::on_client_handler(Client *who) {
 		} catch (const std::exception &e) {
 			std::cout << "HTTP request leads to throw/catch, what=" << e.what() << std::endl;
 			response.r.status = 422;
-			response.set_body(std::string());
+			response.set_body(e.what());
 		} catch (...) {
 			std::cout << "HTTP request leads to throw/catch" << std::endl;
 			response.r.status = 422;
-			response.set_body(std::string());
 		}
 		if (result)
 			who->write(std::move(response));
