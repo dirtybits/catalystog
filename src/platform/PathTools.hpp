@@ -22,7 +22,7 @@ std::string get_default_data_directory(
 // Windows >= Vista: C:\Users\Username\AppData\Roaming\CRYPTONOTE_NAME
 // Mac: ~/.CRYPTONOTE_NAME
 // Unix: ~/.CRYPTONOTE_NAME
-// Storing 40Gb in directory hidden from user (.bytecoin) is generally bad idea
+// Storing 40Gb in directory hidden from user (.catalyst) is generally bad idea
 // Storing 40Gb in Roaming user profile was bad idea for corporate Windows users (should be in Local)
 
 // New method
@@ -38,4 +38,5 @@ bool create_directory_if_necessary(const std::string &path);    // Only last ele
 bool create_directories_if_necessary(const std::string &path);  // Recursively all elements
 bool atomic_replace_file(const std::string &replacement_name, const std::string &old_file_name);
 bool copy_file(const std::string &to_path, const std::string &from_path);
+std::string get_filename_without_directory(const std::string &path);
 }

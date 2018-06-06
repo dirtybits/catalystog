@@ -1,5 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
-// Copyright (c) 2018, The Catalyst project.
+// Copyright (c) 2018, The Catalyst developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "Node.hpp"
@@ -59,10 +59,10 @@ bool Node::on_idle() {
 	if (m_block_chain.get_tip_height() < m_block_chain.internal_import_known_height())
 		m_block_chain.internal_import();
 	else {
-		if (m_block_chain_reader1 && !m_block_chain_reader1->import_blocks(m_block_chain)) {
+		if (m_block_chain_reader1 && !m_block_chain_reader1->import_blocks(&m_block_chain)) {
 			m_block_chain_reader1.reset();
 		}
-		if (m_block_chain_reader2 && !m_block_chain_reader2->import_blocks(m_block_chain)) {
+		if (m_block_chain_reader2 && !m_block_chain_reader2->import_blocks(&m_block_chain)) {
 			m_block_chain_reader2.reset();
 		}
 	}
@@ -128,7 +128,7 @@ void Node::P2PClientCatalyst::on_msg_handshake(COMMAND_HANDSHAKE::response &&req
 void Node::P2PClientCatalyst::on_msg_notify_request_chain(NOTIFY_REQUEST_CHAIN::request &&req) {
 	NOTIFY_RESPONSE_CHAIN_ENTRY::request msg;
 	msg.m_block_ids = m_node->m_block_chain.get_sync_headers_chain(
-	    req.block_ids, msg.start_height, config.p2p_block_ids_sync_default_count);
+	    req.block_ids, &msg.start_height, config.p2p_block_ids_sync_default_count);
 	msg.total_height = m_node->m_block_chain.get_tip_height() + 1;
 
 	BinaryArray raw_msg =
@@ -145,7 +145,7 @@ void Node::P2PClientCatalyst::on_msg_notify_request_objects(NOTIFY_REQUEST_GET_O
 	msg.current_blockchain_height = m_node->m_block_chain.get_tip_height() + 1;
 	for (auto &&bh : req.blocks) {
 		RawBlock raw_block;
-		if (m_node->m_block_chain.read_block(bh, raw_block)) {
+		if (m_node->m_block_chain.read_block(bh, &raw_block)) {
 			msg.blocks.push_back(RawBlockLegacy{raw_block.block, raw_block.transactions});
 		} else
 			msg.missed_ids.push_back(bh);
@@ -181,9 +181,11 @@ void Node::P2PClientCatalyst::on_msg_notify_request_tx_pool(NOTIFY_REQUEST_TX_PO
 		auto it = std::lower_bound(req.txs.begin(), req.txs.end(), tx.first);
 		if (it != req.txs.end() && *it == tx.first)
 			continue;
-		BinaryArray raw_tx = seria::to_binary(tx.second);
-		msg.txs.push_back(std::move(raw_tx));
+		msg.txs.push_back(tx.second.binary_tx);
 	}
+	m_node->m_log(logging::TRACE) << "on_msg_notify_request_tx_pool from " << get_address()
+	                              << " peer sent=" << req.txs.size() << " we are relaying=" << msg.txs.size()
+	                              << std::endl;
 	if (msg.txs.empty())
 		return;
 	BinaryArray raw_msg = LevinProtocol::send_message(NOTIFY_NEW_TRANSACTIONS::ID, LevinProtocol::encode(msg), false);
@@ -201,7 +203,7 @@ void Node::P2PClientCatalyst::on_msg_notify_new_block(NOTIFY_NEW_BLOCK::request 
 	RawBlock raw_block{req.b.block, req.b.transactions};
 	PreparedBlock pb(std::move(raw_block), nullptr);
 	api::BlockHeader info;
-	auto action = m_node->m_block_chain.add_block(pb, info);
+	auto action = m_node->m_block_chain.add_block(pb, &info);
 	switch (action) {
 	case BroadcastAction::BAN:
 		disconnect("NOTIFY_NEW_BLOCK add_block BAN");
@@ -223,6 +225,7 @@ void Node::P2PClientCatalyst::on_msg_notify_new_transactions(NOTIFY_NEW_TRANSACT
 	    m_node->m_block_chain.get_tip_height() < m_node->m_block_chain.internal_import_known_height())
 		return;  // We cannot check tx while downloading anyway
 	NOTIFY_NEW_TRANSACTIONS::request msg;
+	Hash any_tid;
 	for (auto &&raw_tx : req.txs) {
 		Transaction tx;
 		try {
@@ -231,18 +234,27 @@ void Node::P2PClientCatalyst::on_msg_notify_new_transactions(NOTIFY_NEW_TRANSACT
 			disconnect("NOTIFY_NEW_TRANSACTIONS add_transaction BAN from_binary failed " + std::string(ex.what()));
 			return;
 		}
-		auto action = m_node->m_block_chain.add_transaction(tx, m_node->m_p2p.get_local_time());
+		const Hash tid = get_transaction_hash(tx);
+		any_tid        = tid;
+		auto action    = m_node->m_block_chain.add_transaction(tid, tx, raw_tx, m_node->m_p2p.get_local_time());
 		switch (action) {
-		case BroadcastAction::BAN:
+		case AddTransactionResult::BAN:
 			disconnect("NOTIFY_NEW_TRANSACTIONS add_transaction BAN");
 			return;
-		case BroadcastAction::BROADCAST_ALL:
+		case AddTransactionResult::BROADCAST_ALL:
 			msg.txs.push_back(raw_tx);
 			break;
-		case BroadcastAction::NOTHING:
+		case AddTransactionResult::ALREADY_IN_POOL:
+		case AddTransactionResult::INCREASE_FEE:
+		case AddTransactionResult::FAILED_TO_REDO:
+		case AddTransactionResult::OUTPUT_ALREADY_SPENT:
 			break;
 		}
 	}
+	m_node->m_log(logging::TRACE) << "on_msg_notify_new_transactions from " << get_address()
+	                              << " got=" << req.txs.size() << " relaying=" << msg.txs.size()
+	                              << (req.txs.size() > 1 ? " notify_tx_reply (?) " : " ")
+	                              << (any_tid == Hash{} ? "" : common::pod_to_hex(any_tid)) << std::endl;
 	if (msg.txs.empty())
 		return;
 	BinaryArray raw_msg = LevinProtocol::send_message(NOTIFY_NEW_TRANSACTIONS::ID, LevinProtocol::encode(msg), false);
@@ -459,6 +471,7 @@ const std::unordered_map<std::string, Node::JSONRPCHandlerFunction> Node::m_json
     {api::catalystd::SendTransaction::method(), json_rpc::make_member_method(&Node::handle_send_transaction3)},
     {api::catalystd::CheckSendProof::method(), json_rpc::make_member_method(&Node::handle_check_send_proof3)},
     {api::catalystd::SyncBlocks::method(), json_rpc::make_member_method(&Node::on_wallet_sync3)},
+    {api::catalystd::GetRawTransaction::method(), json_rpc::make_member_method(&Node::on_get_raw_transaction3)},
     {api::catalystd::SyncMemPool::method(), json_rpc::make_member_method(&Node::on_sync_mempool3)}};
 
 bool Node::on_get_random_outputs3(http::Client *, http::RequestData &&, json_rpc::Request &&,
@@ -517,32 +530,27 @@ bool Node::on_get_status3(http::Client *who, http::RequestData &&raw_request, js
 
 bool Node::on_wallet_sync3(http::Client *, http::RequestData &&, json_rpc::Request &&json_req,
     api::catalystd::SyncBlocks::Request &&req, api::catalystd::SyncBlocks::Response &res) {
-	if (req.sparse_chain.empty()) {
-		//        res.status = "Empty sparse chain";
-		return true;
-	}
-
-	if (req.sparse_chain.back() != m_block_chain.get_genesis_bid()) {
-		//        res.status = "Different currency";
-		return true;
-	}
-	if (req.max_count > api::catalystd::SyncBlocks::Request::MAX_COUNT) {
-		//        res.status = "max_count too big";
-		return true;
-	}
+	if (req.sparse_chain.empty())
+		throw std::runtime_error("Empty sparse chain - must include at least genesis block");
+	if (req.sparse_chain.back() != m_block_chain.get_genesis_bid())
+		throw std::runtime_error(
+		    "Wrong currency - different genesis block. Must be " + common::pod_to_hex(m_block_chain.get_genesis_bid()));
+	if (req.max_count > api::catalystd::SyncBlocks::Request::MAX_COUNT)
+		throw std::runtime_error(
+		    "Too big max_count - must be < " + std::to_string(api::catalystd::SyncBlocks::Request::MAX_COUNT));
 	auto first_block_timestamp = req.first_block_timestamp < m_block_chain.get_currency().block_future_time_limit
 	                                 ? 0
 	                                 : req.first_block_timestamp - m_block_chain.get_currency().block_future_time_limit;
 	Height full_offset = m_block_chain.get_timestamp_lower_bound_block_index(first_block_timestamp);
 	Height start_block_index;
 	std::vector<crypto::Hash> supplement =
-	    m_block_chain.get_sync_headers_chain(req.sparse_chain, start_block_index, req.max_count);
+	    m_block_chain.get_sync_headers_chain(req.sparse_chain, &start_block_index, req.max_count);
 	if (full_offset >= start_block_index + supplement.size()) {
 		start_block_index = full_offset;
 		supplement.clear();
 		while (supplement.size() < req.max_count) {
 			Hash ha;
-			if (!m_block_chain.read_chain(start_block_index + static_cast<Height>(supplement.size()), ha))
+			if (!m_block_chain.read_chain(start_block_index + static_cast<Height>(supplement.size()), &ha))
 				break;
 			supplement.push_back(ha);
 		}
@@ -555,24 +563,24 @@ bool Node::on_wallet_sync3(http::Client *, http::RequestData &&, json_rpc::Reque
 	res.blocks.resize(supplement.size());
 	for (size_t i = 0; i != supplement.size(); ++i) {
 		auto bhash = supplement[i];
-		if (!m_block_chain.read_header(bhash, res.blocks[i].header))
+		if (!m_block_chain.read_header(bhash, &res.blocks[i].header))
 			throw std::logic_error("Block header must be there, but it is not there");
 		BlockChainState::BlockGlobalIndices global_indices;
 		// if (res.blocks[i].header.timestamp >= req.first_block_timestamp) //
 		// commented out becuase empty Block cannot be serialized
 		{
 			RawBlock rb;
-			if (!m_block_chain.read_block(bhash, rb))
+			if (!m_block_chain.read_block(bhash, &rb))
 				throw std::logic_error("Block must be there, but it is not there");
 			Block block;
 			if (!block.from_raw_block(rb))
 				throw std::logic_error("RawBlock failed to convert into block");
 			res.blocks[i].base_transaction_hash = get_transaction_hash(block.header.base_transaction);
-			res.blocks[i].bc_header             = std::move(block.header);
-			res.blocks[i].bc_transactions.reserve(block.transactions.size());
+			res.blocks[i].raw_header            = std::move(block.header);
+			res.blocks[i].raw_transactions.reserve(block.transactions.size());
 			for (auto &&tx : block.transactions)
-				res.blocks[i].bc_transactions.push_back(std::move(tx));
-			if (!m_block_chain.read_block_output_global_indices(bhash, res.blocks[i].global_indices))
+				res.blocks[i].raw_transactions.push_back(std::move(tx));
+			if (!m_block_chain.read_block_output_global_indices(bhash, &res.blocks[i].global_indices))
 				throw std::logic_error(
 				    "Invariant dead - bid is in chain but "
 				    "blockchain has no block indices");
@@ -591,12 +599,39 @@ bool Node::on_sync_mempool3(http::Client *, http::RequestData &&, json_rpc::Requ
 	for (auto &&tx : pool)
 		if (!std::binary_search(req.known_hashes.begin(), req.known_hashes.end(), tx.first)) {
 			//			res.added_binary_transactions.push_back(seria::to_binary(tx.second));
-			res.added_bc_transactions.push_back(tx.second);
+			res.added_raw_transactions.push_back(tx.second.tx);
 			res.added_transactions.push_back(api::Transaction{});
 			res.added_transactions.back().hash      = tx.first;
 			res.added_transactions.back().timestamp = m_block_chain.read_first_seen_timestamp(tx.first);
+			res.added_transactions.back().fee       = tx.second.fee;
 		}
 	res.status = create_status_response3();
+	return true;
+}
+
+bool Node::on_get_raw_transaction3(http::Client *, http::RequestData &&, json_rpc::Request &&,
+    api::catalystd::GetRawTransaction::Request &&req, api::catalystd::GetRawTransaction::Response &res) {
+	const auto &pool = m_block_chain.get_memory_state_transactions();
+	auto tit         = pool.find(req.hash);
+	if (tit != pool.end()) {
+		res.raw_transaction          = static_cast<TransactionPrefix>(tit->second.tx);
+		res.transaction.hash         = req.hash;
+		res.transaction.block_height = m_block_chain.get_tip_height() + 1;
+		res.transaction.timestamp    = m_block_chain.read_first_seen_timestamp(req.hash);
+		return true;
+	}
+	Transaction tx;
+	Hash block_hash;
+	Height block_height   = 0;
+	size_t index_in_block = 0;
+	if (m_block_chain.read_transaction(req.hash, &tx, &block_height, &block_hash, &index_in_block)) {
+		res.raw_transaction          = static_cast<TransactionPrefix>(tx);  // TODO - std::move?
+		res.transaction.hash         = req.hash;
+		res.transaction.block_hash   = block_hash;
+		res.transaction.block_height = block_height;
+		// TODO - add more parameters
+		return true;
+	}
 	return true;
 }
 
@@ -605,15 +640,31 @@ bool Node::handle_send_transaction3(http::Client *, http::RequestData &&, json_r
 	NOTIFY_NEW_TRANSACTIONS::request msg;
 	Transaction tx;
 	seria::from_binary(tx, request.binary_transaction);
-	if (m_block_chain.add_transaction(tx, m_p2p.get_local_time()) != BroadcastAction::BROADCAST_ALL) {
-		response.send_result = "Failed to be broadcasted";  // TODO - process error
-		return true;
+	const Hash tid = get_transaction_hash(tx);
+	auto action    = m_block_chain.add_transaction(tid, tx, request.binary_transaction, m_p2p.get_local_time());
+	switch (action) {
+	case AddTransactionResult::BAN:
+		throw json_rpc::Error(-101, "Binary transaction format is wrong");
+	case AddTransactionResult::BROADCAST_ALL: {
+		msg.txs.push_back(request.binary_transaction);
+		BinaryArray raw_msg =
+		    LevinProtocol::send_message(NOTIFY_NEW_TRANSACTIONS::ID, LevinProtocol::encode(msg), false);
+		m_p2p.broadcast(nullptr, raw_msg);
+		response.send_result = "broadcast";  // Success
+		advance_long_poll();
+		break;
 	}
-	msg.txs.push_back(request.binary_transaction);
-	BinaryArray raw_msg = LevinProtocol::send_message(NOTIFY_NEW_TRANSACTIONS::ID, LevinProtocol::encode(msg), false);
-	m_p2p.broadcast(nullptr, raw_msg);
-	response.send_result = "broadcast";  // Success
-	advance_long_poll();
+	case AddTransactionResult::ALREADY_IN_POOL:
+		response.send_result = "broadcast";  // Was broadcasted already
+		break;
+	case AddTransactionResult::INCREASE_FEE:
+		response.send_result = "increasefee";
+		break;
+	case AddTransactionResult::FAILED_TO_REDO:
+		throw json_rpc::Error(-102, "Transaction references outputs changed during reorganization or signature wrong");
+	case AddTransactionResult::OUTPUT_ALREADY_SPENT:
+		throw json_rpc::Error(-103, "One of referenced outputs is already spent");
+	}
 	return true;
 }
 
@@ -624,21 +675,19 @@ bool Node::handle_check_send_proof3(http::Client *, http::RequestData &&, json_r
 	try {
 		seria::from_json_value(sp, common::JsonValue::from_string(request.send_proof));
 	} catch (const std::exception &ex) {
-		response.validation_error = "Failed to parse proof object ex.what=" + std::string(ex.what());
-		return true;
+		throw json_rpc::Error(-201, "Failed to parse proof object ex.what=" + std::string(ex.what()));
 	}
-	Height height         = 0;
+	Height height = 0;
+	Hash block_hash;
 	size_t index_in_block = 0;
-	if (!m_block_chain.read_transaction(sp.transaction_hash, tx, height, index_in_block)) {
-		response.validation_error = "transaction is not in main chain";
-		return true;
+	if (!m_block_chain.read_transaction(sp.transaction_hash, &tx, &height, &block_hash, &index_in_block)) {
+		throw json_rpc::Error(-202, "Transaction is not in main chain");
 	}
 	PublicKey tx_public_key = get_transaction_public_key_from_extra(tx.extra);
 	Hash message_hash       = crypto::cn_fast_hash(sp.message.data(), sp.message.size());
 	if (!crypto::check_send_proof(
 	        tx_public_key, sp.address.view_public_key, sp.derivation, message_hash, sp.signature)) {
-		response.validation_error = "proof object does not match transaction, address or message";
-		return true;
+		throw json_rpc::Error(-203, "Proof object does not match transaction or was tampered with");
 	}
 	Amount total_amount = 0;
 	size_t key_index    = 0;
@@ -656,9 +705,8 @@ bool Node::handle_check_send_proof3(http::Client *, http::RequestData &&, json_r
 		++out_index;
 	}
 	if (total_amount == 0)
-		response.validation_error = "no outputs found in transaction for the address being proofed";
-	else if (total_amount != sp.amount)
-		response.validation_error = "wrong amount in outputs, actual amount is " + std::to_string(total_amount);
-	// here proof is checked, validation_error is empty
+		throw json_rpc::Error(-204, "No outputs found in transaction for the address being proofed");
+	if (total_amount != sp.amount)
+		throw json_rpc::Error(-205, "Wrong amount in outputs, actual amount is " + std::to_string(total_amount));
 	return true;
 }

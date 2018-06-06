@@ -1,10 +1,11 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
-// Copyright (c) 2018, The Catalyst project.
+// Copyright (c) 2018, The Catalyst developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
 
 #include <deque>
+#include <unordered_map>
 #include "CryptoNote.hpp"
 #include "Currency.hpp"
 #include "platform/DB.hpp"
@@ -14,6 +15,14 @@
 namespace catalyst {
 
 enum class BroadcastAction { BROADCAST_ALL, NOTHING, BAN };
+enum class AddTransactionResult {
+	BAN,
+	BROADCAST_ALL,
+	ALREADY_IN_POOL,
+	INCREASE_FEE,
+	FAILED_TO_REDO,
+	OUTPUT_ALREADY_SPENT
+};
 
 struct PreparedBlock {
 	BinaryArray block_data;
@@ -34,7 +43,7 @@ class BlockChain {
 public:
 	typedef platform::DB DB;
 
-	explicit BlockChain(const Hash &genesis_bid, const std::string &coin_folder);
+	explicit BlockChain(const Hash &genesis_bid, const std::string &coin_folder, bool read_only);
 	virtual ~BlockChain() {}
 
 	const std::string &get_coin_folder() const { return m_coin_folder; }
@@ -44,56 +53,67 @@ public:
 	Height get_tip_height() const { return m_tip_height; }
 	const api::BlockHeader &get_tip() const;
 
-	std::pair<std::deque<api::BlockHeader>::const_iterator, std::deque<api::BlockHeader>::const_iterator>
-	get_tip_segment(Height height_delta, Height window, bool add_genesis) const;
+	std::vector<api::BlockHeader> get_tip_segment(
+	    const api::BlockHeader &prev_info, Height window, bool add_genesis) const;
 
-	bool read_chain(Height height, Hash &bid) const;
-	bool read_block(const Hash &bid, RawBlock &rb) const;
+	bool read_chain(Height height, Hash *bid) const;
+	bool read_block(const Hash &bid, RawBlock *rb) const;
 	bool has_block(const Hash &bid) const;
-	bool read_header(const Hash &bid, api::BlockHeader &info) const;
-	bool read_transaction(const Hash &tid, Transaction &tx, Height &height, size_t &index_in_block) const;
+	bool read_header(const Hash &bid, api::BlockHeader *info) const;
+	bool read_transaction(
+	    const Hash &tid, Transaction *tx, Height *block_height, Hash *block_hash, size_t *index_in_block) const;
 
-	// Modify blockchain state. bytecoin header does not contain enough info for consensus calcs, so we cannot have
+	// Modify blockchain state. catalyst header does not contain enough info for consensus calcs, so we cannot have
 	// header chain without block chain
-	BroadcastAction add_block(const PreparedBlock &pb, api::BlockHeader &info);
+	BroadcastAction add_block(const PreparedBlock &pb, api::BlockHeader *info);
 
 	// Facilitate sync and download
 	std::vector<Hash> get_sparse_chain() const;
 	std::vector<api::BlockHeader> get_sync_headers(const std::vector<Hash> &sparse_chain, size_t max_count) const;
 	std::vector<Hash> get_sync_headers_chain(
-	    const std::vector<Hash> &sparse_chain, Height &start_height, size_t max_count) const;
+	    const std::vector<Hash> &sparse_chain, Height *start_height, size_t max_count) const;
 
 	Height find_blockchain_supplement(const std::vector<Hash> &remote_block_ids) const;
 	Height get_timestamp_lower_bound_block_index(Timestamp) const;
 
-	void test_undo_everything();
-	void test_print_structure() const;
+	void test_undo_everything(Height new_tip_height);
+	void test_print_structure(Height n_confirmations) const;
+
+	void test_consensus(Height start_height);
 	void test_prune_oldest();
+
 	void db_commit();
 
 	bool internal_import();  // import some existing blocks from inside DB
 	Height internal_import_known_height() const { return m_internal_import_known_height; }
 
 protected:
-	bool read_next_internal_block(Hash &bid) const;
-	virtual bool check_standalone_consensus(
-	    const PreparedBlock &pb, api::BlockHeader &info, const api::BlockHeader &prev_info) const = 0;
+	Difficulty get_tip_cumulative_difficulty() const { return m_tip_cumulative_difficulty; }
+	bool read_next_internal_block(Hash *bid) const;
+	virtual std::string check_standalone_consensus(
+	    const PreparedBlock &pb, api::BlockHeader *info, const api::BlockHeader &prev_info, bool check_pow) const = 0;
 	virtual bool redo_block(const Hash &bhash, const Block &block, const api::BlockHeader &info)  = 0;
 	virtual void undo_block(const Hash &bhash, const Block &block, Height height)                 = 0;
 	bool redo_block(const Hash &bhash, const RawBlock &raw_block, const Block &block, const api::BlockHeader &info,
 	    const Hash &base_transaction_hash);
 	void undo_block(const Hash &bhash, const RawBlock &raw_block, const Block &block, Height height);
 	virtual void tip_changed() {}  // Quick hack to allow BlockChainState to update next block params
+	virtual void on_reorganization(
+	    const std::map<Hash, std::pair<Transaction, BinaryArray>> &undone_transactions, bool undone_blocks) = 0;
+	void fix_difficulty_consensus();
+	void check_consensus_fast();
 
 	const Hash m_genesis_bid;
 	const std::string m_coin_folder;
 	Hash get_common_block(
-	    const Hash &bid1, const Hash &bid2, std::vector<Hash> *chain1, std::vector<Hash> *chain2) const;
+	    const Hash &bid1, const Hash &bid2, std::vector<Hash> *chain1, std::vector<Hash> *chain2) const; // both can be null
 
 	DB m_db;
 
 	Hash read_chain(Height height) const;
 	api::BlockHeader read_header(const Hash &bid) const;
+
+	static const std::string version_current;
 
 private:
 	Hash m_tip_bid;
@@ -103,7 +123,7 @@ private:
 	void read_tip();
 	void push_chain(Hash bid, Difficulty cumulative_difficulty);
 	void pop_chain();
-	mutable std::deque<api::BlockHeader> m_tip_segment;
+	mutable std::unordered_map<Hash, api::BlockHeader> header_cache;
 	// We cache recent headers for quick calculation in block windows
 
 	void store_block(const Hash &bid, const BinaryArray &block_data);
@@ -116,8 +136,10 @@ private:
 
 	void check_children_counter(Difficulty cd, const Hash &bid, int value);
 	void modify_children_counter(Difficulty cd, const Hash &bid, int delta);
-	bool get_oldest_tip(Difficulty &cd, Hash &bid) const;
+	bool get_oldest_tip(Difficulty *cd, Hash *bid) const;
 	bool prune_branch(Difficulty cd, Hash bid);
+	bool fix_consensus(Hash bid, const api::BlockHeader &was_info);
+	void check_consensus_fast(Hash bid);
 };
 
 }  // namespace catalyst

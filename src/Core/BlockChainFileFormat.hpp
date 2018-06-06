@@ -1,5 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
-// Copyright (c) 2018, The Catalyst project.
+// Copyright (c) 2018, The Catalyst developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -44,9 +44,9 @@ public:
 	BinaryArray get_block_data_by_index(Height);
 	PreparedBlock get_prepared_block_by_index(Height);
 
-	bool import_blocks(BlockChainState &block_chain);  // return false when no more blocks remain
+	bool import_blocks(BlockChainState *block_chain);  // return false when no more blocks remain
 
-	static bool import_blockchain2(const std::string &coin_folder, BlockChainState &block_chain);
+	static bool import_blockchain2(const std::string &coin_folder, BlockChainState *block_chain);
 };
 
 class LegacyBlockChainWriter {
@@ -57,7 +57,7 @@ public:
 	LegacyBlockChainWriter(const std::string &index_file_name, const std::string &item_file_name, uint64_t count);
 	void write_block(const catalyst::RawBlock &raw_block);
 
-	static bool export_blockchain2(const std::string &export_folder, BlockChainState &block_chain);
+	static bool export_blockchain2(const std::string &export_folder, const BlockChainState &block_chain);
 };
 
 }  // namespace catalyst

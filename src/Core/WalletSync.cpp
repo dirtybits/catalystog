@@ -1,5 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
-// Copyright (c) 2018, The Catalyst project.
+// Copyright (c) 2018, The Catalyst developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include "WalletSync.hpp"
@@ -106,15 +106,20 @@ void WalletSync::send_sync_pool() {
 	m_sync_request = std::make_unique<http::Request>(m_sync_agent, std::move(req_header),
 	    [&](http::ResponseData &&response) {
 		    m_sync_request.reset();
-		    api::catalystd::SyncMemPool::Response resp;
-		    seria::from_binary(resp, response.body);
-		    m_last_node_status = resp.status;
-		    m_sync_error       = "WRONG_BLOCKCHAIN";
-		    if (m_wallet_state.sync_with_blockchain(resp)) {
-			    m_sync_error = std::string();
-			    advance_sync();
-		    } else
+		    if (response.r.status == 200) {
+			    m_sync_error = "WRONG_BLOCKCHAIN";
+			    api::catalystd::SyncMemPool::Response resp;
+			    seria::from_binary(resp, response.body);
+			    m_last_node_status = resp.status;
+			    if (m_wallet_state.sync_with_blockchain(resp)) {
+				    m_sync_error = std::string();
+				    advance_sync();
+			    } else
+				    m_status_timer.once(STATUS_ERROR_PERIOD);
+		    } else {
+			    m_sync_error = response.body;
 			    m_status_timer.once(STATUS_ERROR_PERIOD);
+		    }
 		    m_state_changed_handler();
 		},
 	    [&](std::string err) {
@@ -136,15 +141,20 @@ void WalletSync::send_get_blocks() {
 	m_sync_request = std::make_unique<http::Request>(m_sync_agent, std::move(req_header),
 	    [&](http::ResponseData &&response) {
 		    m_sync_request.reset();
-		    api::catalystd::SyncBlocks::Response resp;
-		    seria::from_binary(resp, response.body);
-		    m_last_node_status = resp.status;
-		    m_sync_error       = "WRONG_BLOCKCHAIN";
-		    if (m_wallet_state.sync_with_blockchain(resp)) {
-			    m_sync_error = std::string();
-			    advance_sync();
-		    } else
+		    if (response.r.status == 200) {
+			    m_sync_error = "WRONG_BLOCKCHAIN";
+			    api::catalystd::SyncBlocks::Response resp;
+			    seria::from_binary(resp, response.body);
+			    m_last_node_status = resp.status;
+			    if (m_wallet_state.sync_with_blockchain(resp)) {
+				    m_sync_error = std::string();
+				    advance_sync();
+			    } else
+				    m_status_timer.once(STATUS_ERROR_PERIOD);
+		    } else {
+			    m_sync_error = response.body;
 			    m_status_timer.once(STATUS_ERROR_PERIOD);
+		    }
 		    m_state_changed_handler();
 		},
 	    [&](std::string err) {
