@@ -1,5 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
-// Copyright (c) 2018, The Catalyst project.
+// Copyright (c) 2018, The Catalyst developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #include <thread>
@@ -23,6 +23,7 @@
 static const char USAGE[] =
     R"(tests. return code 0 means success
 uses relative paths and should be run from bin folder
+
 Usage:
   tests [options]
 Options:
@@ -49,12 +50,12 @@ void test_blockchain(common::CommandLine &cmd) {
 	config.data_folder = "../tests";
 	catalyst::BlockChain::DB::delete_db(config.data_folder + "/blockchain");
 	Currency currency(config.is_testnet);
-	BlockChainState block_chain(logger, config, currency);
-	block_chain.test_print_structure();
+	BlockChainState block_chain(logger, config, currency, false);
+	block_chain.test_print_structure(0);
 	AccountPublicAddress address;
 	crypto::CryptoNightContext cryptoContext;
 	if (!currency.parse_account_address_string(
-	        "21mQ7KPdmLbjfpg3Coayi4hZzAEgjeL87QXGeDTHahKeJsvKHc6DoprAJmqUcLhWTUXtxCL6rQFSwEUe6NZdEoqZNpSq1iC", address))
+	        "21mQ7KPdmLbjfpg3Coayi4hZzAEgjeL87QXGeDTHahKeJsvKHc6DoprAJmqUcLhWTUXtxCL6rQFSwEUe6NZdEoqZNpSq1iC", &address))
 		throw std::runtime_error("parse_account_address_string failed");
 	Timestamp ts = block_chain.get_tip().timestamp;
 	std::vector<BlockTemplate> templates;
@@ -63,7 +64,7 @@ void test_blockchain(common::CommandLine &cmd) {
 		BlockTemplate block;
 		Difficulty difficulty = 0;
 		Height height         = 0;
-		if (!block_chain.create_mining_block_template(block, address, catalyst::BinaryArray{}, difficulty, height))
+		if (!block_chain.create_mining_block_template(&block, address, catalyst::BinaryArray{}, &difficulty, &height))
 			throw std::runtime_error("create_mining_block_template failed");
 		fix_merge_mining_tag(block);
 		block.timestamp = ts + (i + 1) * currency.difficulty_target;
@@ -79,13 +80,13 @@ void test_blockchain(common::CommandLine &cmd) {
 		RawBlock rb;
 		api::BlockHeader info;
 		BinaryArray raw_block_template = seria::to_binary(block);
-		if (block_chain.add_mined_block(raw_block_template, rb, info) == BroadcastAction::BAN)
+		if (block_chain.add_mined_block(raw_block_template, &rb, &info) == BroadcastAction::BAN)
 			throw std::runtime_error("add_mined_block failed");
 		std::cout << "ts=" << block.timestamp << " mts=" << info.timestamp_median << " height=" << info.height
 		          << " bid=" << common::pod_to_hex(info.hash) << std::endl;
 	}
 	// Mine alternatives
-	block_chain.test_print_structure();
+	block_chain.test_print_structure(0);
 	for (int i = 0; i != 100; ++i) {
 		size_t ha             = crypto::rand<size_t>() % templates.size();
 		BlockTemplate block   = templates.at(ha);
@@ -100,16 +101,16 @@ void test_blockchain(common::CommandLine &cmd) {
 		RawBlock rb;
 		api::BlockHeader info;
 		BinaryArray raw_block_template = seria::to_binary(block);
-		if (block_chain.add_mined_block(raw_block_template, rb, info) == BroadcastAction::BAN)
+		if (block_chain.add_mined_block(raw_block_template, &rb, &info) == BroadcastAction::BAN)
 			throw std::runtime_error("add_mined_block failed");
 		std::cout << "ts=" << block.timestamp << " mts=" << info.timestamp_median << " height=" << info.height
 		          << " bid=" << common::pod_to_hex(info.hash) << std::endl;
 	}
 	block_chain.db_commit();
-	block_chain.test_print_structure();
+	block_chain.test_print_structure(0);
 	for (int i = 0; i != 50; ++i) {
 		block_chain.test_prune_oldest();
-		block_chain.test_print_structure();
+		block_chain.test_print_structure(0);
 	}
 }
 
