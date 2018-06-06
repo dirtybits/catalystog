@@ -580,7 +580,7 @@ void ser_members(catalyst::api::catalystd::SyncBlocks::SyncBlock &v, ISeria &s);
 void ser_members(catalyst::api::catalystd::SyncBlocks::Response &v, ISeria &s);
 void ser_members(catalyst::api::catalystd::GetRawTransaction::Request &v, ISeria &s);
 void ser_members(catalyst::api::catalystd::GetRawTransaction::Response &v, ISeria &s);void ser_members(catalyst::api::catalystd::SyncMemPool::Request &v, ISeria &s);
-void ser_members(bytecoin::api::catalystd::SyncMemPool::Request &v, ISeria &s);
+void ser_members(catalyst::api::catalystd::SyncMemPool::Request &v, ISeria &s);
 void ser_members(catalyst::api::catalystd::SyncMemPool::Response &v, ISeria &s);
 void ser_members(catalyst::api::catalystd::GetRandomOutputs::Request &v, ISeria &s);
 void ser_members(catalyst::api::catalystd::GetRandomOutputs::Response &v, ISeria &s);
