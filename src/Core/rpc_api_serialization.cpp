@@ -33,7 +33,7 @@ void ser_members(catalyst::SendProof &v, ISeria &s) {
 		addr = Currency::get_account_address_as_str(CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX, v.address);
 	seria_kv("address", addr, s);
 	uint64_t prefix = 0;
-	if (s.is_input() && (!Currency::parse_account_address_string(prefix, v.address, addr) ||
+	if (s.is_input() && (!Currency::parse_account_address_string(&prefix, &v.address, addr) ||
 	                        prefix != CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX))
 		throw std::runtime_error("Wrong address format - " + addr);
 	std::string proof;
@@ -46,7 +46,7 @@ void ser_members(catalyst::SendProof &v, ISeria &s) {
 	}
 	seria_kv("proof", proof, s);
 	if (s.is_input()) {
-		if (!common::base58::decode(proof, binary_proof) ||
+		if (!common::base58::decode(proof, &binary_proof) ||
 		    binary_proof.size() != sizeof(v.derivation.data) + sizeof(v.signature.c) + sizeof(v.signature.r))
 			throw std::runtime_error("Wrong proof format - " + proof);
 		memmove(v.derivation.data, binary_proof.data(), sizeof(v.derivation));
@@ -369,14 +369,13 @@ void ser_members(api::walletd::CreateTransaction::Request &v, ISeria &s) {
 	seria_kv("fee_per_byte", v.fee_per_byte, s);
 	seria_kv("optimization", v.optimization, s);
 	seria_kv("save_history", v.save_history, s);
-	//	seria_kv("send_immediately", v.send_immediately, s);
+	seria_kv("prevent_conflict_with_transactions", v.prevent_conflict_with_transactions, s);
 }
 void ser_members(api::walletd::CreateTransaction::Response &v, ISeria &s) {
 	seria_kv("transaction", v.transaction, s);
 	seria_kv("binary_transaction", v.binary_transaction, s);
 	seria_kv("save_history_error", v.save_history_error, s);
-	//	seria_kv("transaction_hash", v.transaction_hash, s);
-	//	seria_kv("send_result", v.send_result, s);
+	seria_kv("transactions_required", v.transactions_required, s);
 }
 void ser_members(api::walletd::CreateSendProof::Request &v, ISeria &s) {
 	seria_kv("transaction_hash", v.transaction_hash, s);
@@ -410,8 +409,8 @@ void ser_members(api::catalystd::SyncBlocks::Request &v, ISeria &s) {
 }
 void ser_members(catalyst::api::catalystd::SyncBlocks::SyncBlock &v, ISeria &s) {
 	seria_kv("header", v.header, s);
-	seria_kv("bc_header", v.bc_header, s);
-	seria_kv("bc_transactions", v.bc_transactions, s);
+	seria_kv("raw_header", v.raw_header, s);
+	seria_kv("raw_transactions", v.raw_transactions, s);
 	seria_kv("base_transaction_hash", v.base_transaction_hash, s);
 	seria_kv("global_indices", v.global_indices, s);
 }
@@ -419,6 +418,11 @@ void ser_members(api::catalystd::SyncBlocks::Response &v, ISeria &s) {
 	seria_kv("blocks", v.blocks, s);
 	seria_kv("start_height", v.start_height, s);
 	seria_kv("status", v.status, s);
+}
+void ser_members(api::catalystd::GetRawTransaction::Request &v, ISeria &s) { seria_kv("hash", v.hash, s); }
+void ser_members(api::catalystd::GetRawTransaction::Response &v, ISeria &s) {
+	seria_kv("transaction", v.transaction, s);
+	seria_kv("raw_transaction", v.raw_transaction, s);
 }
 void ser_members(api::catalystd::SyncMemPool::Request &v, ISeria &s) {
 	if (!s.is_input())
@@ -429,7 +433,7 @@ void ser_members(api::catalystd::SyncMemPool::Request &v, ISeria &s) {
 }
 void ser_members(api::catalystd::SyncMemPool::Response &v, ISeria &s) {
 	seria_kv("removed_hashes", v.removed_hashes, s);
-	seria_kv("added_bc_transactions", v.added_bc_transactions, s);
+	seria_kv("added_raw_transactions", v.added_raw_transactions, s);
 	seria_kv("added_transactions", v.added_transactions, s);
 	seria_kv("status", v.status, s);
 }
@@ -448,8 +452,7 @@ void ser_members(catalyst::api::catalystd::CheckSendProof::Request &v, ISeria &s
 }
 void ser_members(catalyst::api::catalystd::CheckSendProof::Response &v, ISeria &s) {
 	seria_kv("validation_error", v.validation_error, s);
-}
-/*void ser_members(catalyst::api::walletd::GetBlock::Request &v, ISeria &s) {
+}/*void ser_members(catalyst::api::walletd::GetBlock::Request &v, ISeria &s) {
         seria_kv("hash", v.hash, s);
         seria_kv("height", v.height, s);
 }*/

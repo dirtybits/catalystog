@@ -1,5 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
-// Copyright (c) 2018, The Catalyst project.
+// Copyright (c) 2018, The Catalyst developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -49,7 +49,7 @@ struct PreparedWalletBlock {
 	Hash base_transaction_hash;
 	std::vector<PreparedWalletTransaction> transactions;
 	PreparedWalletBlock() {}
-	PreparedWalletBlock(BlockTemplate &&bc_header, std::vector<TransactionPrefix> &&bc_transactions,
+	PreparedWalletBlock(BlockTemplate &&bc_header, std::vector<TransactionPrefix> &&raw_transactions,
 	    Hash base_transaction_hash, const SecretKey &view_secret_key);
 };
 
@@ -134,6 +134,7 @@ public:
 	std::vector<api::Block> api_get_transfers(const std::string &address, Height &from_height, Height &to_height,
 	    bool forward, uint32_t desired_tx_count = std::numeric_limits<uint32_t>::max()) const;
 	bool api_get_transaction(Hash tid, TransactionPrefix &tx, api::Transaction &ptx) const;
+	bool api_has_transaction(Hash tid) const;
 	bool api_create_proof(SendProof &sp) const;
 	api::Block api_get_pool_as_history(const std::string &address) const;
 	std::map<std::pair<Amount, uint32_t>, api::Output> api_get_unlocked_outputs(
@@ -191,7 +192,6 @@ protected:
 	const Currency &m_currency;
 	logging::ILogger &m_log;
 	Wallet &m_wallet;
-
 private:
 	void modify_balance(const api::Output &output, int locked_op, int spendable_op);
 	DB m_db;

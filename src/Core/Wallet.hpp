@@ -1,5 +1,5 @@
 // Copyright (c) 2012-2018, The CryptoNote developers, The Bytecoin developers.
-// Copyright (c) 2018, The Catalyst project.
+// Copyright (c) 2018, The Catalyst developers.
 // Licensed under the GNU Lesser General Public License. See LICENSE for details.
 
 #pragma once
@@ -69,7 +69,7 @@ public:
 	std::vector<WalletRecord> generate_new_addresses(
 	    const std::vector<SecretKey> &sks, Timestamp ct);  // set secret_key to SecretKey{} to generate
 	void set_password(const std::string &password);
-	void export_view_only(const std::string &export_path);
+	void export_wallet(const std::string &export_path, bool view_only);
 	bool is_view_only() const { return first_record.spend_secret_key == SecretKey{}; }
 	BinaryArray export_keys() const;
 	const PublicKey &get_view_public_key() const { return m_view_public_key; }
