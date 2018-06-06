@@ -22,7 +22,7 @@ std::string get_default_data_directory(
 // Windows >= Vista: C:\Users\Username\AppData\Roaming\CRYPTONOTE_NAME
 // Mac: ~/.CRYPTONOTE_NAME
 // Unix: ~/.CRYPTONOTE_NAME
-// Storing 40Gb in directory hidden from user (.bytecoin) is generally bad idea
+// Storing 40Gb in directory hidden from user (.catalyst) is generally bad idea
 // Storing 40Gb in Roaming user profile was bad idea for corporate Windows users (should be in Local)
 
 // New method
