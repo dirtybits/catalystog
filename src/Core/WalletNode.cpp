@@ -429,7 +429,7 @@ bool WalletNode::handle_create_transaction3(http::Client *who, http::RequestData
 	api::walletd::CreateTransaction::Request request_copy = request;  // TODO ???
 	http::RequestData new_request =
 		json_rpc::create_request(api::catalystd::url(), api::catalystd::GetRandomOutputs::method(), ra_request);
-	new_request.r.basic_authorization = m_config.bytecoind_authorization;
+	new_request.r.basic_authorization = m_config.catalystd_authorization;
 	add_waiting_command(who, std::move(raw_request), raw_js_request.get_id(), std::move(new_request),
 	    [=](const WaitingClient &wc, http::ResponseData &&random_response) mutable {
 		    m_log(logging::INFO) << "got response to get_random_outputs, status=" << random_response.r.status
@@ -514,7 +514,7 @@ bool WalletNode::handle_send_transaction3(http::Client *who, http::RequestData &
 	new_request.set_body(std::move(raw_request.body));  // We save on copying body here
 	new_request.r.set_firstline("POST", api::catalystd::url(), 1, 1);
 	transient_transactions_counter += 1;
-	new_request.r.basic_authorization = m_config.bytecoind_authorization;
+	new_request.r.basic_authorization = m_config.catalystd_authorization;
 	add_waiting_command(who, std::move(raw_request), raw_js_request.get_id(), std::move(new_request),
 	    [=](const WaitingClient &wc2, http::ResponseData &&send_response) mutable {
 		    transient_transactions_counter -= 1;
