@@ -6,7 +6,7 @@
 
 // defines are for Windows resource compiler
 #define catalyst_VERSION_WINDOWS_COMMA 3, 18, 5, 24
-#define catalyst_VERSION_STRING "3.1.1"
+#define catalyst_VERSION_STRING "3.1.1" // we will need to change this for the first release
 
 #ifndef RC_INVOKED  // Windows resource compiler
 
