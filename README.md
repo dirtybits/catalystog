@@ -30,7 +30,7 @@ To go futher you have to have a number of packages and utilities. You need at le
     If version is too old, follow instructions on [the official site](https://cmake.org/download/).
 
 * Boost (1.62 or newer):
-    You need boost in `cstdev` folder. We do not configure to use boost installed by `apt-get`, because it is sometimes updated without your control by installing some unrelated packages. Also some users reported crashes after `find_package` finds headers from one version of boost and libraries from different version, or if installed boost uses dynamic linking.
+    You'll need boost in the `cstdev` folder. We do not configure to use boost installed by `apt-get`, because it is sometimes updated without your control by installing some unrelated packages. Also some users reported crashes after `find_package` finds headers from one version of boost and libraries from different version, or if installed boost uses dynamic linking.
     ```
     $cstdev> wget -c 'http://sourceforge.net/projects/boost/files/boost/1.67.0/boost_1_67_0.tar.bz2/download'
     $cstdev> tar xf download
