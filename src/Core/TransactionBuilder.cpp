@@ -242,7 +242,7 @@ std::string UnspentSelector::select_optimal_outputs(Height block_height, Timesta
 	const size_t optimization_median = effective_median_size * optimization_median_percent / 100;
 	while (true) {
 		if (!select_optimal_outputs(&have_coins, &dust_coins, max_digits, total_amount + fee, anonymity, optimizations))
-			return false;
+			return "NOT ENOUGH FUNDS";
 		Amount change_dust_fee = (m_used_total - total_amount - fee) % m_currency.default_dust_threshold;
 		size_t tx_size         = get_maximum_tx_size(m_inputs_count, total_outputs + 8,
 		    anonymity);  // TODO - 8 is expected max change outputs
