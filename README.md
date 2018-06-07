@@ -1,6 +1,6 @@
 # Catalyst 
 
-Catalyst is an experimental P2P cryptocurrency and payment system that allows users to send and receive payments to and from anyone in the world.
+Catalyst is an experimental cryptocurrency and P2P payment system that allows users to send and receive payments to and from anyone in the world.
 
 The following guide is based off of:
 https://github.com/bcndev/bytecoin/blob/master/README.md
