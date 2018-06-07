@@ -1,5 +1,8 @@
 # Catalyst 
 
+The following guide is based off of:
+https://github.com/bcndev/bytecoin/blob/master/README.md
+
 ## Building on Linux 64-bit
 
 All commands below are adapted for Ubuntu, other distributions may need a different command set.
