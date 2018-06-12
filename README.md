@@ -1,6 +1,6 @@
 # Catalyst 
 
-Catalyst is an experimental digital currency and P2P payment system that allows users to quickly send and receive payments to and from anyone in the world. The system also contains many of the privacy & security features utilized by its fellow CryptoNote derivatives. These properties make Catalyst applicable to a wide variety of transactions and applications.
+Catalyst is an experimental digital currency and P2P payment system that allows users to quickly send and receive payments to and from anyone in the world. The system also contains many of the privacy & security features utilized by its fellow CryptoNote derivatives. These properties make Catalyst applicable to a wide variety of applications.
 
 The following guide is based off of:
 https://github.com/bcndev/bytecoin/blob/master/README.md
