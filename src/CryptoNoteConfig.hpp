@@ -17,14 +17,14 @@ namespace parameters {
 const uint32_t CRYPTONOTE_MAX_BLOCK_NUMBER             = 500000000;
 const uint32_t CRYPTONOTE_MAX_BLOCK_BLOB_SIZE          = 500000000;
 const uint32_t CRYPTONOTE_MAX_TX_SIZE                  = 1000000000;
-const uint64_t CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 0x171f54;  // addresses start with "cat"
+const uint64_t CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 0x171f54;  // addresses start with "cat1"
 const uint32_t CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW    = 60;
 const uint32_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT      = 60 * 60 * 2;
 
 const uint32_t BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW = 60;
 
 // MONEY_SUPPLY - total number coins to be generated
-const uint64_t MONEY_SUPPLY          = UINT64_C(77700000000000000); // 777 million coins
+const uint64_t MONEY_SUPPLY          = UINT64_C(7700000000000000); // 77 million coins
 const unsigned EMISSION_SPEED_FACTOR = 18;
 static_assert(EMISSION_SPEED_FACTOR <= 8 * sizeof(uint64_t), "Bad EMISSION_SPEED_FACTOR");
 
@@ -80,7 +80,7 @@ const char CRYPTONOTE_BLOCKINDEXES_FILENAME[] = "blockindexes.bin";
 }  // parameters
 
 const char CRYPTONOTE_NAME[]                  = "catalyst";
-const char GENESIS_COINBASE_TX_HEX[]          = "013c01ff0001ffffffffffff03029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121017767aafcde9be00dcfd098715ebcf7f410daebc582fda69d24a28e9d0bc890d1"; // Need to generate this, spoofing it may be the solution
+const char GENESIS_COINBASE_TX_HEX[]          = ""; // Need to generate this, spoofing it may be the solution
 
 const uint8_t CURRENT_TRANSACTION_VERSION     = 1;
 
@@ -110,8 +110,8 @@ const char P2P_STAT_TRUSTED_PUB_KEY[] = "8f80f9a5a434a9f1510d13336228debfee9c918
 
 // Network seed nodes 
 const char *const SEED_NODES[] = {
-    "149.28.121.202:17290" 
-    "149.28.60.17:17290"
+    // "149.28.121.202:17290" 
+    // "149.28.60.17:17290"
 };
 
 struct CheckpointData {
