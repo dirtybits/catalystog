@@ -17,7 +17,7 @@ namespace parameters {
 const uint32_t CRYPTONOTE_MAX_BLOCK_NUMBER             = 500000000;
 const uint32_t CRYPTONOTE_MAX_BLOCK_BLOB_SIZE          = 500000000;
 const uint32_t CRYPTONOTE_MAX_TX_SIZE                  = 1000000000;
-const uint64_t CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 0x171f54;  // addresses start with "cat1"
+const uint64_t CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 0x171f54;  // addresses start with "cat1" (1515348)base10
 const uint32_t CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW    = 60;
 const uint32_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT      = 60 * 60 * 2;
 
@@ -25,7 +25,7 @@ const uint32_t BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW = 60;
 
 // MONEY_SUPPLY - total number coins to be generated
 const uint64_t MONEY_SUPPLY          = UINT64_C(770000000000000); // 77 million coins
-const unsigned EMISSION_SPEED_FACTOR = 18;
+const unsigned EMISSION_SPEED_FACTOR = 19;
 static_assert(EMISSION_SPEED_FACTOR <= 8 * sizeof(uint64_t), "Bad EMISSION_SPEED_FACTOR");
 
 const size_t CRYPTONOTE_REWARD_BLOCKS_WINDOW = 100;
