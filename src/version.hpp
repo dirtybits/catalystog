@@ -5,7 +5,7 @@
 #pragma once
 
 // defines are for Windows resource compiler
-#define catalyst_VERSION_WINDOWS_COMMA 3, 18, 5, 24
+#define catalyst_VERSION_WINDOWS_COMMA 0, 0, 1, 0
 #define catalyst_VERSION_STRING "0.0.1" // we will need to change this for the first release
 
 #ifndef RC_INVOKED  // Windows resource compiler
