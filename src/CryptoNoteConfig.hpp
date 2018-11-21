@@ -24,7 +24,7 @@ const uint32_t CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT      = 60 * 60 * 2;
 const uint32_t BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW = 60;
 
 // MONEY_SUPPLY - total number coins to be generated
-const uint64_t MONEY_SUPPLY          = UINT64_C(7700000000000000); // 77 million coins
+const uint64_t MONEY_SUPPLY          = UINT64_C(770000000000000); // 77 million coins
 const unsigned EMISSION_SPEED_FACTOR = 18;
 static_assert(EMISSION_SPEED_FACTOR <= 8 * sizeof(uint64_t), "Bad EMISSION_SPEED_FACTOR");
 
@@ -35,7 +35,7 @@ const size_t CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 = 20000;
 const size_t CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1 = 10000;
 // const size_t CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_CURRENT = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
 const size_t CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE = 600;
-const size_t CRYPTONOTE_DISPLAY_DECIMAL_POINT       = 8;
+const size_t CRYPTONOTE_DISPLAY_DECIMAL_POINT       = 7;
 const uint64_t MINIMUM_FEE                          = 1000000;  // pow(10, 6)
 const uint64_t DEFAULT_DUST_THRESHOLD               = 1000000;  // pow(10, 6)
 
@@ -80,7 +80,7 @@ const char CRYPTONOTE_BLOCKINDEXES_FILENAME[] = "blockindexes.bin";
 }  // parameters
 
 const char CRYPTONOTE_NAME[]                  = "catalyst";
-const char GENESIS_COINBASE_TX_HEX[]          = ""; // Need to generate this, spoofing it may be the solution
+const char GENESIS_COINBASE_TX_HEX[]          = "010a01ff0001b1c7caccdb4d029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121015ad72746c83b8d70a584e60ea6e6fd2b8a0dbc78a6a54fb9a8e8d8a9974b0df2"; // Need to generate this, spoofing it may be the solution
 
 const uint8_t CURRENT_TRANSACTION_VERSION     = 1;
 
@@ -110,8 +110,8 @@ const char P2P_STAT_TRUSTED_PUB_KEY[] = "8f80f9a5a434a9f1510d13336228debfee9c918
 
 // Network seed nodes 
 const char *const SEED_NODES[] = {
-    // "149.28.121.202:17290" 
-    // "149.28.60.17:17290"
+    "45.63.71.202:17290" 
+    "8.12.16.176:17290"
 };
 
 struct CheckpointData {
