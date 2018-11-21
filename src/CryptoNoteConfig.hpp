@@ -80,7 +80,7 @@ const char CRYPTONOTE_BLOCKINDEXES_FILENAME[] = "blockindexes.bin";
 }  // parameters
 
 const char CRYPTONOTE_NAME[]                  = "catalyst";
-const char GENESIS_COINBASE_TX_HEX[]          = "010a01ff0001b1c7caccdb4d029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121015ad72746c83b8d70a584e60ea6e6fd2b8a0dbc78a6a54fb9a8e8d8a9974b0df2"; // Need to generate this, spoofing it may be the solution
+const char GENESIS_COINBASE_TX_HEX[]          = "010a01ff0001b1c7caccdb4d029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd0880712101d8593d5ab94cd98c65d3f9ffd191c029e6e7fdf530c7c6b20448d2d5b86614e8"; // Need to generate this, spoofing it may be the solution
 
 const uint8_t CURRENT_TRANSACTION_VERSION     = 1;
 
